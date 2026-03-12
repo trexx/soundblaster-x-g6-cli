@@ -20,7 +20,7 @@ def api(monkeypatch: pytest.MonkeyPatch) -> g6_api.G6Api:
     """
     # mock detect_device() method on g6_api module level
     monkeypatch.setattr(g6_api, "detect_device", MagicMock(return_value=G6Device))
-    return g6_api.G6Api(dry_run=True, debug=True)
+    return g6_api.G6Api(dry_run=True, debug=True, persist_model=False)
 
 
 # args_list returns list of CLI argument strings
@@ -30,11 +30,11 @@ ArgsListFactory = Callable[[], list[str]]
 CLI_CASES: list[tuple[str, ArgsListFactory]] = []
 
 # @formatter:off
-# --- Device / services ---
+# ─── Device / services ───
 CLI_CASES.append(("reload_alsa_and_pipewire", lambda: ["--reload-audio-services"]))
 CLI_CASES.append(("reload_alsa_and_pipewire", lambda: ["--reload-audio-services", "--reload-audio-services-no-sudo"]))
 
-# --- Playback ---
+# ─── Playback ───
 CLI_CASES.append(("playback_toggle_to_speakers", lambda: ["--set-output", "Speakers"]))
 CLI_CASES.append(("playback_toggle_to_headphones", lambda: ["--set-output", "Headphones"]))
 CLI_CASES.append(("playback_toggle_to_speakers", lambda: ["--toggle-output"]))
@@ -58,18 +58,18 @@ CLI_CASES.append(("playback_enable_spdif_out_direct_mode", lambda: ["--playback-
 for playback_filter in PlaybackFilter:
     CLI_CASES.append(("playback_filter", lambda pf=playback_filter: ["--playback-filter", pf.name]))
 
-# --- Decoder ---
+# ─── Decoder ───
 CLI_CASES.append(("decoder_mode", lambda: ["--decoder-mode", "Normal"]))
 CLI_CASES.append(("decoder_mode", lambda: ["--decoder-mode", "Full"]))
 CLI_CASES.append(("decoder_mode", lambda: ["--decoder-mode", "Night"]))
 
-# --- Lighting ---
+# ─── Lighting ───
 CLI_CASES.append(("lighting_disable", lambda: ["--lighting-disable"]))
 CLI_CASES.append(("lighting_enable_set_rgb", lambda: ["--lighting-rgb", "0", "0", "0"]))
 CLI_CASES.append(("lighting_enable_set_rgb", lambda: ["--lighting-rgb", "12", "34", "56"]))
 CLI_CASES.append(("lighting_enable_set_rgb", lambda: ["--lighting-rgb", "255", "255", "255"]))
 
-# --- Mixer ---
+# ─── Mixer ───
 CLI_CASES.append(("mixer_playback_mute", lambda: ["--mixer-playback-mute", "Enabled"]))
 CLI_CASES.append(("mixer_playback_mute", lambda: ["--mixer-playback-mute", "Disabled"]))
 CLI_CASES.append(("mixer_monitoring_line_in_mute", lambda: ["--mixer-monitoring-line-in-mute", "Enabled"]))
@@ -108,7 +108,7 @@ CLI_CASES.append(("mixer_recording_what_u_hear_volume", lambda: ["--mixer-record
 CLI_CASES.append(("mixer_recording_what_u_hear_volume", lambda: ["--mixer-recording-what-u-hear-volume", "40"]))
 CLI_CASES.append(("mixer_recording_what_u_hear_volume", lambda: ["--mixer-recording-what-u-hear-volume", "100"]))
 
-# --- Recording ---
+# ─── Recording ───
 CLI_CASES.append(("recording_mute", lambda: ["--recording-mute", "Enabled"]))
 CLI_CASES.append(("recording_mute", lambda: ["--recording-mute", "Disabled"]))
 CLI_CASES.append(("recording_mic_recording_volume", lambda: ["--recording-mic-recording-volume", "0"]))
@@ -137,7 +137,7 @@ CLI_CASES.append(("recording_voice_clarity_mic_equalizer_enabled", lambda: ["--r
 for preset in MicrophoneEqualizerPreset:
     CLI_CASES.append(("recording_voice_clarity_mic_equalizer_preset", lambda p=preset: ["--recording-voice-clarity-mic-eq-preset", p.name]))
 
-# --- SBX ---
+# ─── SBX ───
 CLI_CASES.append(("sbx_toggle", lambda: ["--sbx-surround", "Enabled"]))
 CLI_CASES.append(("sbx_toggle", lambda: ["--sbx-surround", "Disabled"]))
 CLI_CASES.append(("sbx_slider", lambda: ["--sbx-surround-value", "0"]))

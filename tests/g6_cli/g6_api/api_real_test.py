@@ -7,7 +7,7 @@ import g6_cli.g6_api as g6_api
 
 @pytest.fixture(scope="session")
 def api() -> g6_api.G6Api:
-    return g6_api.G6Api(dry_run=False, debug=True)
+    return g6_api.G6Api(dry_run=False, debug=True, persist_model=False)
 
 
 @pytest.fixture(scope="session", autouse=True)

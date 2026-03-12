@@ -12,7 +12,7 @@ from g6_cli.g6_spec.recording import MicrophoneEqualizerPreset
 
 @pytest.fixture()
 def api(monkeypatch: pytest.MonkeyPatch) -> g6_api.G6Api:
-    return g6_api.G6Api(dry_run=True, debug=True)
+    return g6_api.G6Api(dry_run=True, debug=True, persist_model=False)
 
 
 # args_factory returns (args_tuple, kwargs_dict)
@@ -21,7 +21,7 @@ ArgFactory = Callable[[], tuple[tuple, dict]]
 # noinspection PyListCreation
 CASES: list[tuple[str, ArgFactory]] = []
 
-# --- Playback ---
+# ─── Playback ───
 CASES.append(("playback_mute", lambda: ((True,), {})))
 CASES.append(("playback_mute", lambda: ((False,), {})))
 CASES.append(("playback_toggle_to_speakers", lambda: ((), {})))
@@ -42,17 +42,17 @@ CASES.append(("playback_enable_spdif_out_direct_mode", lambda: ((False,), {})))
 for playback_filter in PlaybackFilter:
     CASES.append(("playback_filter", lambda: ((playback_filter,), {})))
 
-# --- Decoder ---
+# ─── Decoder ───
 for decoder in DecoderMode:
     CASES.append(("decoder_mode", lambda: ((decoder,), {})))
 
-# --- Lighting ---
+# ─── Lighting ───
 CASES.append(("lighting_disable", lambda: ((), {})))
 CASES.append(("lighting_enable_set_rgb", lambda: ((), {"red": 0, "green": 0, "blue": 0})))
 CASES.append(("lighting_enable_set_rgb", lambda: ((), {"red": 12, "green": 34, "blue": 56})))
 CASES.append(("lighting_enable_set_rgb", lambda: ((), {"red": 255, "green": 255, "blue": 255})))
 
-# --- Mixer ---
+# ─── Mixer ───
 CASES.append(("mixer_playback_mute", lambda: ((True,), {})))
 CASES.append(("mixer_playback_mute", lambda: ((False,), {})))
 CASES.append(("mixer_monitoring_line_in_mute", lambda: ((True,), {})))
@@ -91,7 +91,7 @@ CASES.append(("mixer_recording_what_u_hear_volume", lambda: ((0,), {})))
 CASES.append(("mixer_recording_what_u_hear_volume", lambda: ((40,), {})))
 CASES.append(("mixer_recording_what_u_hear_volume", lambda: ((100,), {})))
 
-# --- Recording ---
+# ─── Recording ───
 CASES.append(("recording_mute", lambda: ((True,), {})))
 CASES.append(("recording_mute", lambda: ((False,), {})))
 CASES.append(("recording_mic_recording_volume", lambda: ((0,), {})))
@@ -117,7 +117,7 @@ CASES.append(("recording_voice_clarity_mic_equalizer_enabled", lambda: ((False,)
 for preset in MicrophoneEqualizerPreset:
     CASES.append(("recording_voice_clarity_mic_equalizer_preset", lambda: ((preset,), {})))
 
-# --- SBX ---
+# ─── SBX ───
 for audio_feature in AudioFeature:
     CASES.append(("sbx_toggle", lambda: ((), {"audio_feature": audio_feature, "activate": True})))
     CASES.append(("sbx_toggle", lambda: ((), {"audio_feature": audio_feature, "activate": False})))

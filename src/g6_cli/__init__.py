@@ -733,7 +733,7 @@ def main():
     args = parse_cli_args()
 
     # look up the G6 device
-    api = G6Api(dry_run=args.dry_run, debug=args.debug)
+    api = G6Api(dry_run=args.dry_run, debug=args.debug, persist_model=False)
 
     # process arguments and call the api
     device_set_audio_effects(api=api, args=args)

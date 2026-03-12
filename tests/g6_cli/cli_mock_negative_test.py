@@ -19,7 +19,7 @@ def api(monkeypatch: pytest.MonkeyPatch) -> g6_api.G6Api:
     """
     # mock detect_device() method on g6_api module level
     monkeypatch.setattr(g6_api, "detect_device", MagicMock(return_value=G6Device))
-    return g6_api.G6Api(dry_run=True, debug=True)
+    return g6_api.G6Api(dry_run=True, debug=True, persist_model=False)
 
 
 # args_list returns list of CLI argument strings
@@ -29,7 +29,7 @@ ArgsListFactory = Callable[[], list[str]]
 NEGATIVE_CLI_CASES: list[tuple[str, ArgsListFactory, str]] = []
 
 # @formatter:off
-# --- Playback ---
+# ─── Playback ───
 NEGATIVE_CLI_CASES.append(("set_output_invalid", lambda: ["--set-output", "Bar"], "invalid choice: 'Bar' (choose from 'Speakers', 'Headphones')"))
 NEGATIVE_CLI_CASES.append(("playback_mute_invalid", lambda: ["--playback-mute", "Bar"], "invalid choice: 'Bar' (choose from 'Enabled', 'Disabled')"))
 NEGATIVE_CLI_CASES.append(("playback_volume_invalid_low", lambda: ["--playback-volume", "-1"], "invalid choice: -1 (choose from 0, 1, 2,"))
@@ -40,15 +40,15 @@ NEGATIVE_CLI_CASES.append(("playback_direct_mode_invalid", lambda: ["--playback-
 NEGATIVE_CLI_CASES.append(("playback_spdif_out_direct_mode_invalid", lambda: ["--playback-spdif-out-direct-mode", "Bar"], "invalid choice: 'Bar' (choose from 'Enabled', 'Disabled')"))
 NEGATIVE_CLI_CASES.append(("playback_filter_invalid", lambda: ["--playback-filter", "BAR"], "invalid choice: 'BAR'"))
 
-# --- Decoder ---
+# ─── Decoder ───
 NEGATIVE_CLI_CASES.append(("decoder_mode_invalid", lambda: ["--decoder-mode", "Bar"], "invalid choice: 'Bar' (choose from 'Normal', 'Full', 'Night')"))
 
-# --- Lighting ---
+# ─── Lighting ───
 NEGATIVE_CLI_CASES.append(("lighting_rgb_missing_arg", lambda: ["--lighting-rgb", "0", "0"], "expected 3 arguments"))
 NEGATIVE_CLI_CASES.append(("lighting_rgb_extra_arg", lambda: ["--lighting-rgb", "0", "0", "0", "0"], "unrecognized arguments: 0"))
 NEGATIVE_CLI_CASES.append(("lighting_rgb_invalid_type", lambda: ["--lighting-rgb", "0", "bar", "0"], "invalid int value: 'bar'"))
 
-# --- Mixer ---
+# ─── Mixer ───
 NEGATIVE_CLI_CASES.append(("mixer_playback_mute_invalid", lambda: ["--mixer-playback-mute", "Bar"], "invalid choice: 'Bar' (choose from 'Enabled', 'Disabled')"))
 NEGATIVE_CLI_CASES.append(("mixer_monitoring_line_in_mute_invalid", lambda: ["--mixer-monitoring-line-in-mute", "Bar"], "invalid choice: 'Bar' (choose from 'Enabled', 'Disabled')"))
 NEGATIVE_CLI_CASES.append(("mixer_monitoring_line_in_volume_invalid", lambda: ["--mixer-monitoring-line-in-volume", "5"], "invalid choice: 5 (choose from 0, 10, 20,"))
@@ -81,7 +81,7 @@ NEGATIVE_CLI_CASES.append(("mixer_recording_what_u_hear_volume_invalid", lambda:
 NEGATIVE_CLI_CASES.append(("mixer_recording_what_u_hear_volume_type", lambda: ["--mixer-recording-what-u-hear-volume", "bar"], "invalid int value: 'bar'"))
 NEGATIVE_CLI_CASES.append(("mixer_recording_what_u_hear_volume_channels_invalid", lambda: ["--mixer-recording-what-u-hear-volume-channels", "Bar"], "invalid choice: 'Bar' (choose from 'Both', 'Left', 'Right')"))
 
-# --- Recording ---
+# ─── Recording ───
 NEGATIVE_CLI_CASES.append(("recording_mute_invalid", lambda: ["--recording-mute", "Bar"], "invalid choice: 'Bar' (choose from 'Enabled', 'Disabled')"))
 NEGATIVE_CLI_CASES.append(("recording_mic_recording_volume_invalid", lambda: ["--recording-mic-recording-volume", "5"], "invalid choice: 5 (choose from 0, 10, 20,"))
 NEGATIVE_CLI_CASES.append(("recording_mic_recording_volume_type", lambda: ["--recording-mic-recording-volume", "bar"], "invalid int value: 'bar'"))
@@ -104,7 +104,7 @@ NEGATIVE_CLI_CASES.append(("recording_voice_clarity_smart_volume_invalid", lambd
 NEGATIVE_CLI_CASES.append(("recording_voice_clarity_mic_eq_invalid", lambda: ["--recording-voice-clarity-mic-eq", "Bar"], "invalid choice: 'Bar' (choose from 'Enabled', 'Disabled')"))
 NEGATIVE_CLI_CASES.append(("recording_voice_clarity_mic_eq_preset_invalid", lambda: ["--recording-voice-clarity-mic-eq-preset", "BAR"], "invalid choice: 'BAR'"))
 
-# --- SBX ---
+# ─── SBX ───
 NEGATIVE_CLI_CASES.append(("sbx_surround_invalid", lambda: ["--sbx-surround", "Bar"], "invalid choice: 'Bar' (choose from 'Enabled', 'Disabled')"))
 NEGATIVE_CLI_CASES.append(("sbx_surround_value_low", lambda: ["--sbx-surround-value", "-1"], "invalid choice: -1 (choose from 0, 1, 2,"))
 NEGATIVE_CLI_CASES.append(("sbx_surround_value_high", lambda: ["--sbx-surround-value", "101"], "invalid choice: 101 (choose from 0, 1, 2,"))

@@ -15,11 +15,11 @@ ArgsListFactory = Callable[[], list[str]]
 CASES: list[tuple[str, ArgsListFactory]] = []
 
 # @formatter:off
-# --- Device / services ---
+# ─── Device / services ───
 CASES.append(("reload_alsa_and_pipewire", lambda: ["--reload-audio-services"]))
 CASES.append(("reload_alsa_and_pipewire", lambda: ["--reload-audio-services", "--reload-audio-services-no-sudo"]))
 
-# --- Playback ---
+# ─── Playback ───
 CASES.append(("playback_toggle_to_speakers", lambda: ["--set-output", "Speakers"]))
 CASES.append(("playback_toggle_to_headphones", lambda: ["--set-output", "Headphones"]))
 CASES.append(("playback_toggle_to_speakers", lambda: ["--toggle-output"]))
@@ -43,18 +43,18 @@ CASES.append(("playback_enable_spdif_out_direct_mode", lambda: ["--playback-spdi
 for playback_filter in PlaybackFilter:
     CASES.append(("playback_filter", lambda pf=playback_filter: ["--playback-filter", pf.name]))
 
-# --- Decoder ---
+# ─── Decoder ───
 CASES.append(("decoder_mode", lambda: ["--decoder-mode", "Normal"]))
 CASES.append(("decoder_mode", lambda: ["--decoder-mode", "Full"]))
 CASES.append(("decoder_mode", lambda: ["--decoder-mode", "Night"]))
 
-# --- Lighting ---
+# ─── Lighting ───
 CASES.append(("lighting_disable", lambda: ["--lighting-disable"]))
 CASES.append(("lighting_enable_set_rgb", lambda: ["--lighting-rgb", "0", "0", "0"]))
 CASES.append(("lighting_enable_set_rgb", lambda: ["--lighting-rgb", "12", "34", "56"]))
 CASES.append(("lighting_enable_set_rgb", lambda: ["--lighting-rgb", "255", "255", "255"]))
 
-# --- Mixer ---
+# ─── Mixer ───
 CASES.append(("mixer_playback_mute", lambda: ["--mixer-playback-mute", "Enabled"]))
 CASES.append(("mixer_playback_mute", lambda: ["--mixer-playback-mute", "Disabled"]))
 CASES.append(("mixer_monitoring_line_in_mute", lambda: ["--mixer-monitoring-line-in-mute", "Enabled"]))
@@ -93,7 +93,7 @@ CASES.append(("mixer_recording_what_u_hear_volume", lambda: ["--mixer-recording-
 CASES.append(("mixer_recording_what_u_hear_volume", lambda: ["--mixer-recording-what-u-hear-volume", "40"]))
 CASES.append(("mixer_recording_what_u_hear_volume", lambda: ["--mixer-recording-what-u-hear-volume", "100"]))
 
-# --- Recording ---
+# ─── Recording ───
 CASES.append(("recording_mute", lambda: ["--recording-mute", "Enabled"]))
 CASES.append(("recording_mute", lambda: ["--recording-mute", "Disabled"]))
 CASES.append(("recording_mic_recording_volume", lambda: ["--recording-mic-recording-volume", "0"]))
@@ -122,7 +122,7 @@ CASES.append(("recording_voice_clarity_mic_equalizer_enabled", lambda: ["--recor
 for preset in MicrophoneEqualizerPreset:
     CASES.append(("recording_voice_clarity_mic_equalizer_preset", lambda p=preset: ["--recording-voice-clarity-mic-eq-preset", p.name]))
 
-# --- SBX ---
+# ─── SBX ───
 CASES.append(("sbx_toggle", lambda: ["--sbx-surround", "Enabled"]))
 CASES.append(("sbx_toggle", lambda: ["--sbx-surround", "Disabled"]))
 CASES.append(("sbx_slider", lambda: ["--sbx-surround-value", "0"]))

@@ -19,7 +19,7 @@ def api(monkeypatch: pytest.MonkeyPatch) -> g6_api.G6Api:
     """
     # mock detect_device() method on g6_api module level
     monkeypatch.setattr(g6_api, "detect_device", MagicMock(return_value=G6Device))
-    return g6_api.G6Api(dry_run=True, debug=True)
+    return g6_api.G6Api(dry_run=True, debug=True, persist_model=False)
 
 
 # args_factory returns (args_tuple, kwargs_dict)
@@ -29,7 +29,7 @@ ArgFactory = Callable[[], tuple[tuple, dict]]
 AUDIO_CASES: list[tuple[str, str, ArgFactory]] = []
 
 # @formatter:off
-# --- Playback (audio) ---
+# ─── Playback (audio) ───
 AUDIO_CASES.append(("playback_mute", "playback_mute_spec", lambda: ((), {"mute": True})))
 AUDIO_CASES.append(("playback_mute", "playback_mute_spec", lambda: ((), {"mute": False})))
 AUDIO_CASES.append(("playback_speakers_to_stereo", "speakers_to_stereo_spec", lambda: ((), {})))
@@ -42,7 +42,7 @@ AUDIO_CASES.append(("playback_volume", "playback_volume_spec", lambda: ((), {"vo
 AUDIO_CASES.append(("playback_volume", "playback_volume_spec", lambda: ((), {"volume_percent": 50, "channels": {Channel.CHANNEL_1, Channel.CHANNEL_2}})))
 AUDIO_CASES.append(("playback_volume", "playback_volume_spec", lambda: ((), {"volume_percent": 100, "channels": {Channel.CHANNEL_1, Channel.CHANNEL_2}})))
 
-# --- Mixer (audio) ---
+# ─── Mixer (audio) ───
 AUDIO_CASES.append(("mixer_playback_mute", "mixer_playback_mute_spec", lambda: ((), {"mute": True})))
 AUDIO_CASES.append(("mixer_playback_mute", "mixer_playback_mute_spec", lambda: ((), {"mute": False})))
 AUDIO_CASES.append(("mixer_monitoring_line_in_mute", "monitoring_line_in_mute_spec", lambda: ((), {"mute": True})))
@@ -81,7 +81,7 @@ AUDIO_CASES.append(("mixer_recording_what_u_hear_volume", "recording_what_u_hear
 AUDIO_CASES.append(("mixer_recording_what_u_hear_volume", "recording_what_u_hear_volume_spec", lambda: ((), {"volume_percent": 40, "channels": {Channel.CHANNEL_1, Channel.CHANNEL_2}})))
 AUDIO_CASES.append(("mixer_recording_what_u_hear_volume", "recording_what_u_hear_volume_spec", lambda: ((), {"volume_percent": 100, "channels": {Channel.CHANNEL_1, Channel.CHANNEL_2}})))
 
-# --- Recording (audio) ---
+# ─── Recording (audio) ───
 AUDIO_CASES.append(("recording_mute", "recording_mute_spec", lambda: ((), {"mute": True})))
 AUDIO_CASES.append(("recording_mute", "recording_mute_spec", lambda: ((), {"mute": False})))
 AUDIO_CASES.append(("recording_mic_recording_volume", "mic_recording_volume_spec", lambda: ((), {"volume_percent": 0, "channels": {Channel.CHANNEL_1, Channel.CHANNEL_2}})))
@@ -96,7 +96,7 @@ AUDIO_CASES.append(("recording_mic_monitoring_volume", "mic_monitoring_volume_sp
 # noinspection PyListCreation
 HID_CASES: list[tuple[str, str, ArgFactory]] = []
 
-# --- Playback (hid) ---
+# ─── Playback (hid) ───
 HID_CASES.append(("playback_toggle_to_speakers", "toggle_to_speakers_spec", lambda: ((), {})))
 HID_CASES.append(("playback_toggle_to_headphones", "toggle_to_headphones_spec", lambda: ((), {})))
 HID_CASES.append(("playback_enable_direct_mode", "enable_direct_mode_spec", lambda: ((), {"enable": True})))
@@ -106,23 +106,23 @@ HID_CASES.append(("playback_enable_spdif_out_direct_mode", "enable_spdif_out_dir
 for playback_filter in PlaybackFilter:
     HID_CASES.append(("playback_filter", "playback_filter_spec", lambda pf=playback_filter: ((), {"playback_filter_enum": pf})))
 
-# --- Decoder (hid) ---
+# ─── Decoder (hid) ───
 for decoder in DecoderMode:
     HID_CASES.append(("decoder_mode", "decoder_mode_spec", lambda d=decoder: ((), {"decoder_mode_enum": d})))
 
-# --- Lighting (hid) ---
+# ─── Lighting (hid) ───
 HID_CASES.append(("lighting_disable", "lighting_disable_spec", lambda: ((), {})))
 HID_CASES.append(("lighting_enable_set_rgb", "lighting_enable_set_rgb_spec", lambda: ((), {"red": 0, "green": 0, "blue": 0})))
 HID_CASES.append(("lighting_enable_set_rgb", "lighting_enable_set_rgb_spec", lambda: ((), {"red": 12, "green": 34, "blue": 56})))
 HID_CASES.append(("lighting_enable_set_rgb", "lighting_enable_set_rgb_spec", lambda: ((), {"red": 255, "green": 255, "blue": 255})))
 
-# --- Recording (hid) ---
+# ─── Recording (hid) ───
 HID_CASES.append(("recording_mic_boost", "mic_boost_spec", lambda: ((), {"decibel": 0})))
 HID_CASES.append(("recording_mic_boost", "mic_boost_spec", lambda: ((), {"decibel": 10})))
 HID_CASES.append(("recording_voice_clarity_enabled", "voice_clarity_enabled_spec", lambda: ((), {"enable": True})))
 HID_CASES.append(("recording_voice_clarity_enabled", "voice_clarity_enabled_spec", lambda: ((), {"enable": False})))
 HID_CASES.append(("recording_voice_clarity_noise_reduction_level", "voice_clarity_noise_reduction_level_spec", lambda: ((), {"level_percent": 0})))
-HID_CASES.append(("recording_voice_clarity_noise_reduction_level", "voice_clarity_noise_reduction_level_spec", lambda: ((), {"level_percent": 30})))
+HID_CASES.append(("recording_voice_clarity_noise_reduction_level", "voice_clarity_noise_reduction_level_spec", lambda: ((), {"level_percent": 20})))
 HID_CASES.append(("recording_voice_clarity_noise_reduction_level", "voice_clarity_noise_reduction_level_spec", lambda: ((), {"level_percent": 100})))
 HID_CASES.append(("recording_voice_clarity_acoustic_echo_cancellation_enabled", "voice_clarity_acoustic_echo_cancellation_enabled_spec", lambda: ((), {"enable": True})))
 HID_CASES.append(("recording_voice_clarity_acoustic_echo_cancellation_enabled", "voice_clarity_acoustic_echo_cancellation_enabled_spec", lambda: ((), {"enable": False})))
@@ -133,7 +133,7 @@ HID_CASES.append(("recording_voice_clarity_mic_equalizer_enabled", "voice_clarit
 for preset in MicrophoneEqualizerPreset:
     HID_CASES.append(("recording_voice_clarity_mic_equalizer_preset", "voice_clarity_mic_equalizer_preset_spec", lambda p=preset: ((), {"preset": p})))
 
-# --- SBX (hid) ---
+# ─── SBX (hid) ───
 for audio_feature in AudioFeature:
     HID_CASES.append(("sbx_toggle", "sbx_toggle_spec", lambda af=audio_feature: ((), {"audio_feature": af, "activate": True})))
     HID_CASES.append(("sbx_toggle", "sbx_toggle_spec", lambda af=audio_feature: ((), {"audio_feature": af, "activate": False})))

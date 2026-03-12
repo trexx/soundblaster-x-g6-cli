@@ -15,7 +15,7 @@ ArgsListFactory = Callable[[], list[str]]
 NEGATIVE_CLI_CASES: list[tuple[str, ArgsListFactory, str]] = []
 
 # @formatter:off
-# --- Playback ---
+# ─── Playback ───
 NEGATIVE_CLI_CASES.append(("set_output_invalid", lambda: ["--set-output", "Bar"], "invalid choice: 'Bar' (choose from 'Speakers', 'Headphones')"))
 NEGATIVE_CLI_CASES.append(("playback_mute_invalid", lambda: ["--playback-mute", "Bar"], "invalid choice: 'Bar' (choose from 'Enabled', 'Disabled')"))
 NEGATIVE_CLI_CASES.append(("playback_volume_invalid_low", lambda: ["--playback-volume", "-1"], "invalid choice: -1 (choose from 0, 1, 2,"))
@@ -26,15 +26,15 @@ NEGATIVE_CLI_CASES.append(("playback_direct_mode_invalid", lambda: ["--playback-
 NEGATIVE_CLI_CASES.append(("playback_spdif_out_direct_mode_invalid", lambda: ["--playback-spdif-out-direct-mode", "Bar"], "invalid choice: 'Bar' (choose from 'Enabled', 'Disabled')"))
 NEGATIVE_CLI_CASES.append(("playback_filter_invalid", lambda: ["--playback-filter", "BAR"], "invalid choice: 'BAR'"))
 
-# --- Decoder ---
+# ─── Decoder ───
 NEGATIVE_CLI_CASES.append(("decoder_mode_invalid", lambda: ["--decoder-mode", "Bar"], "invalid choice: 'Bar' (choose from 'Normal', 'Full', 'Night')"))
 
-# --- Lighting ---
+# ─── Lighting ───
 NEGATIVE_CLI_CASES.append(("lighting_rgb_missing_arg", lambda: ["--lighting-rgb", "0", "0"], "expected 3 arguments"))
 NEGATIVE_CLI_CASES.append(("lighting_rgb_extra_arg", lambda: ["--lighting-rgb", "0", "0", "0", "0"], "unrecognized arguments: 0"))
 NEGATIVE_CLI_CASES.append(("lighting_rgb_invalid_type", lambda: ["--lighting-rgb", "0", "bar", "0"], "invalid int value: 'bar'"))
 
-# --- Mixer ---
+# ─── Mixer ───
 NEGATIVE_CLI_CASES.append(("mixer_playback_mute_invalid", lambda: ["--mixer-playback-mute", "Bar"], "invalid choice: 'Bar' (choose from 'Enabled', 'Disabled')"))
 NEGATIVE_CLI_CASES.append(("mixer_monitoring_line_in_volume_invalid", lambda: ["--mixer-monitoring-line-in-volume", "5"], "invalid choice: 5 (choose from 0, 10, 20,"))
 NEGATIVE_CLI_CASES.append(("mixer_monitoring_line_in_volume_low", lambda: ["--mixer-monitoring-line-in-volume", "-10"], "invalid choice: -10 (choose from 0, 10, 20,"))
@@ -57,7 +57,7 @@ NEGATIVE_CLI_CASES.append(("mixer_recording_what_u_hear_volume_invalid", lambda:
 NEGATIVE_CLI_CASES.append(("mixer_recording_what_u_hear_volume_type", lambda: ["--mixer-recording-what-u-hear-volume", "bar"], "invalid int value: 'bar'"))
 NEGATIVE_CLI_CASES.append(("mixer_recording_what_u_hear_volume_channels_invalid", lambda: ["--mixer-recording-what-u-hear-volume-channels", "Bar"], "invalid choice: 'Bar' (choose from 'Both', 'Left', 'Right')"))
 
-# --- Recording ---
+# ─── Recording ───
 NEGATIVE_CLI_CASES.append(("recording_mic_recording_volume_invalid", lambda: ["--recording-mic-recording-volume", "5"], "invalid choice: 5 (choose from 0, 10, 20,"))
 NEGATIVE_CLI_CASES.append(("recording_mic_recording_volume_type", lambda: ["--recording-mic-recording-volume", "bar"], "invalid int value: 'bar'"))
 NEGATIVE_CLI_CASES.append(("recording_mic_boost_invalid", lambda: ["--recording-mic-boost-db", "5"], "invalid choice: 5 (choose from 0, 10, 20, 30)"))
@@ -72,7 +72,7 @@ NEGATIVE_CLI_CASES.append(("recording_voice_clarity_noise_reduction_high", lambd
 NEGATIVE_CLI_CASES.append(("recording_voice_clarity_noise_reduction_type", lambda: ["--recording-voice-clarity-noise-reduction", "bar"], "invalid int value: 'bar'"))
 NEGATIVE_CLI_CASES.append(("recording_voice_clarity_mic_eq_preset_invalid", lambda: ["--recording-voice-clarity-mic-eq-preset", "BAR"], "invalid choice: 'BAR'"))
 
-# --- SBX ---
+# ─── SBX ───
 NEGATIVE_CLI_CASES.append(("sbx_surround_value_low", lambda: ["--sbx-surround-value", "-1"], "invalid choice: -1 (choose from 0, 1, 2,"))
 NEGATIVE_CLI_CASES.append(("sbx_surround_value_high", lambda: ["--sbx-surround-value", "101"], "invalid choice: 101 (choose from 0, 1, 2,"))
 NEGATIVE_CLI_CASES.append(("sbx_surround_value_type", lambda: ["--sbx-surround-value", "bar"], "invalid int value: 'bar'"))

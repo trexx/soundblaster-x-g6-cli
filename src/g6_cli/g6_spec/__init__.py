@@ -43,6 +43,14 @@ class Channel(Enum):
     CHANNEL_1 = bytes.fromhex('0102')  # LEFT
     CHANNEL_2 = bytes.fromhex('0202')  # RIGHT
 
+    def __lt__(self, other):
+        """
+        Makes this enum sortable for in-order channel serialization in model file ('left channel' before 'right channel').
+        """
+        if not isinstance(other, Channel):
+            return NotImplemented
+        return self.value < other.value
+
 
 class UsbAudioData:
     def __init__(self, b_request: bytes, w_value: bytes, w_index: bytes, w_length: bytes, data_fragment: bytes):
@@ -126,6 +134,7 @@ class UsbHidDataFragment:
         return (f'{self.__static_prefix.hex()}{self.__mode.hex()}{self.__static_intermediate.hex()}'
                 f'{self.__audio_feature.hex()}{self.__value.hex()}{self.__additional_payload.hex()}')
 
+
 class ValueRange:
     def __init__(self, min_value, step_size, max_value):
         self.__min_value = min_value
@@ -141,23 +150,24 @@ class ValueRange:
     def get_max_value(self):
         return self.__max_value
 
-# --- Global values ---
+
+# ─── Global values ───
 
 B_REQUEST = bytes.fromhex('01')
 
 BOTH_CHANNELS = {Channel.CHANNEL_1, Channel.CHANNEL_2}
 
-# --- Playback ---
+# ─── Playback ───
 
 PLAYBACK_PLAYBACK = bytes.fromhex('0001')
 
-# --- Mixer ---
+# ─── Mixer ───
 
 MONITORING_LINE_IN = bytes.fromhex('0009')
 MONITORING_EXTERNAL_MIC: bytes = bytes.fromhex('000A')
 MONITORING_SPDIF_IN = bytes.fromhex('000C')
 
-# --- Recording ---
+# ─── Recording ───
 
 RECORDING_LINE_IN = bytes.fromhex('0003')
 RECORDING_EXTERNAL_MIC = bytes.fromhex('0004')
