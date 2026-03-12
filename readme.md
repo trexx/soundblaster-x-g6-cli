@@ -165,9 +165,12 @@ is complete.
 ## CLI usage
 
 ```text
-usage: soundblaster-x-g6-cli [-h] [--dry-run] [--debug] [--version] [--claim-and-release]
-                 [--reload-audio-services] [--reload-audio-services-no-sudo]
-                 [--toggle-output] [--set-output {Speakers|Headphones}]
+usage: soundblaster-x-g6-cli [-h] [--dry-run] [--debug] [--no-persist] [--version] 
+                 [--claim-and-release]
+                 [--reload-audio-services] 
+                 [--reload-audio-services-no-sudo]
+                 [--toggle-output] 
+                 [--set-output {Speakers|Headphones}]
                  [--playback-mute {Enabled|Disabled}]
                  [--playback-volume {0..100}]
                  [--playback-volume-channels {Both|Left|Right}]
@@ -234,6 +237,7 @@ options:
 General options:
   --dry-run             Used to verify the available hex_line files, without making any calls against the G6 device.
   --debug               Print communication data with the G6 device to the console.
+  --no-persist          Disables reading and writing of the current G6 state in file '~/.soundblaster-x-g6/g6.json'.
   --version             show program's version number and exit
   --claim-and-release   Let the application exclusively claim the G6's USB AudioControl interface from the kernel and release it afterwards. This will disconnect the G6 device from the kernel sound driver "snd-usb-audio" leading the system not having any audio output. Use `--reload-audio-services` to reload the
                         kernel sound driver and make the audio output available again.
