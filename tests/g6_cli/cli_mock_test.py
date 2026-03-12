@@ -184,7 +184,7 @@ def test_cli_args_call_g6api_methods(
     args_list = args_list_factory()
 
     # Mock sys.argv to simulate CLI invocation
-    monkeypatch.setattr("sys.argv", ["g6-cli", "--dry-run"] + args_list)
+    monkeypatch.setattr("sys.argv", ["g6-cli", "--dry-run", "--no-persist"] + args_list)
 
     # Mock determine_toggle_state
     monkeypatch.setattr(g6_cli, 'determine_toggle_state', MagicMock(return_value=TOGGLE_STATE_HEADPHONES))
@@ -211,3 +211,40 @@ def test_cli_args_call_g6api_methods(
         method_mock.assert_called_once_with(**kwargs)
     else:
         assert method_mock.call_count >= 1, f"Expected {method_name} to be called, but it was not."
+
+
+FLAG_CASES = ['dry-run', 'debug', 'no-persist']
+
+
+@pytest.mark.parametrize(
+    "flag_name",
+    FLAG_CASES,
+    ids=[f"{i}__{flag_name}" for i, flag_name in enumerate(FLAG_CASES)],
+)
+def test_cli_dry_run(api: g6_api.G6Api,
+                     monkeypatch: pytest.MonkeyPatch,
+                     flag_name: str) -> None:
+    dry_run_set: bool | None = None
+    debug_set: bool | None = None
+    persist_model_set: bool | None = None
+
+    def g6_api_init_stub(dry_run: bool, debug: bool, persist_model: bool):
+        nonlocal api, dry_run_set, debug_set, persist_model_set
+        dry_run_set = dry_run
+        debug_set = debug
+        persist_model_set = persist_model
+        return MagicMock(return_value=api)
+
+    # Mock sys.argv to simulate CLI invocation
+    monkeypatch.setattr("sys.argv", ["g6-cli", "--" + flag_name, "--toggle-output"])
+
+    # Mock G6Api constructor
+    monkeypatch.setattr(g6_cli, 'G6Api', g6_api_init_stub)
+
+    # Execute CLI main
+    cli_main()
+
+    # Assertions
+    assert dry_run_set == (flag_name == "dry-run")
+    assert debug_set == (flag_name == "debug")
+    assert persist_model_set == (not (flag_name == "no-persist"))

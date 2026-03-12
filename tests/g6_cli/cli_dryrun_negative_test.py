@@ -112,7 +112,7 @@ def test_cli_invalid_arguments_raise_argparse_error_in_dry_run(
     args_list = args_list_factory()
 
     # Simulate CLI invocation with --dry-run + invalid arguments
-    monkeypatch.setattr(sys, "argv", ["g6-cli", "--dry-run"] + args_list)
+    monkeypatch.setattr(sys, "argv", ["g6-cli", "--dry-run", "--no-persist"] + args_list)
 
     # argparse validation should raise SystemExit (usually code 2)
     with pytest.raises(SystemExit) as exit_info:

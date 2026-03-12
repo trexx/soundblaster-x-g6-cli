@@ -146,7 +146,7 @@ def test_cli_args_negative(
     args_list = args_list_factory()
 
     # Mock sys.argv to simulate CLI invocation
-    monkeypatch.setattr(sys, "argv", ["g6-cli", "--dry-run"] + args_list)
+    monkeypatch.setattr(sys, "argv", ["g6-cli", "--dry-run", "--no-persist"] + args_list)
 
     # argparse validation should raise SystemExit (usually code 2)
     with pytest.raises(SystemExit) as exit_info:

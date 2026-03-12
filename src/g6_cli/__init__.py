@@ -2,7 +2,7 @@ import argparse
 import os.path
 import tempfile
 
-from g6_cli.g6_api import G6Api
+from g6_cli.g6_api import G6Api, DEFAULT_MODEL_PATH
 from g6_cli.g6_spec import (
     AudioFeature,
     Channel,
@@ -71,6 +71,8 @@ def parse_cli_args():
                                        help='Used to verify the available hex_line files, without making any calls against the G6 device.')
     general_options_group.add_argument('--debug', required=False, action='store_true',
                                        help='Print communication data with the G6 device to the console.')
+    general_options_group.add_argument('--no-persist', required=False, action='store_true',
+                                       help=f"Disables reading and writing of the current G6 state in file '{DEFAULT_MODEL_PATH}'.")
     general_options_group.add_argument('--version', action='version', version=f'soundblaster-x-g6-cli {VERSION}')
 
     general_options_group.add_argument('--claim-and-release', required=False, action='store_true',
@@ -733,7 +735,7 @@ def main():
     args = parse_cli_args()
 
     # look up the G6 device
-    api = G6Api(dry_run=args.dry_run, debug=args.debug, persist_model=False)
+    api = G6Api(dry_run=args.dry_run, debug=args.debug, persist_model=not args.no_persist)
 
     # process arguments and call the api
     device_set_audio_effects(api=api, args=args)

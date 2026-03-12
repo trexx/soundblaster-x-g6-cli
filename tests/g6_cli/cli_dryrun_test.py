@@ -171,7 +171,7 @@ def test_cli_commands_execute_in_dry_run_without_errors(
     args_list = args_list_factory()
 
     # Mock sys.argv to simulate CLI invocation with --dry-run
-    monkeypatch.setattr("sys.argv", ["g6-cli", "--dry-run", "--debug"] + args_list)
+    monkeypatch.setattr("sys.argv", ["g6-cli", "--dry-run", "--debug", "--no-persist"] + args_list)
 
     # Execute CLI main (should not raise any errors)
     result = cli_main()
