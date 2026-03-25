@@ -5,7 +5,13 @@ class Decoder:
     """Decoder audio component."""
 
     def __init__(self):
-        self.__mode: DecoderMode = DecoderMode.NORMAL
+        self.__mode: DecoderMode | None = None
+
+    @classmethod
+    def default(cls):
+        instance = cls()
+        instance.__mode = DecoderMode.NORMAL
+        return instance
 
     def get_mode(self) -> DecoderMode:
         """

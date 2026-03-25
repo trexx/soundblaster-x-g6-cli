@@ -1,3 +1,5 @@
+from enum import Enum
+
 from g6_cli.g6_spec import SmartVolumeSpecialHex
 
 
@@ -101,32 +103,42 @@ class SBX:
     """SBX audio component with typed feature instances."""
 
     def __init__(self):
-        self.__surround = SBXFeature(
+        self.__surround: SBXFeature | None = None
+        self.__crystalizer: SBXFeature | None = None
+        self.__bass: SBXFeature | None = None
+        self.__smart_volume: SmartVolumeSBXFeature | None = None
+        self.__dialog_plus: SBXFeature | None = None
+
+    @classmethod
+    def default(cls):
+        instance = cls()
+        instance.__surround = SBXFeature(
             name="Surround",
             toggle_value=False,
             slider_value=50
         )
-        self.__crystalizer = SBXFeature(
+        instance.__crystalizer = SBXFeature(
             name="Crystalizer",
             toggle_value=False,
             slider_value=50
         )
-        self.__bass = SBXFeature(
+        instance.__bass = SBXFeature(
             name="Bass",
             toggle_value=False,
             slider_value=50
         )
-        self.__smart_volume = SmartVolumeSBXFeature(
+        instance.__smart_volume = SmartVolumeSBXFeature(
             name="Smart Volume",
             toggle_value=False,
             slider_value=50,
             special_value=None
         )
-        self.__dialog_plus = SBXFeature(
+        instance.__dialog_plus = SBXFeature(
             name="Dialog Plus",
             toggle_value=False,
             slider_value=50
         )
+        return instance
 
     # ── Surround ────────────────────────────────────────────────────────────────
 
@@ -219,4 +231,101 @@ class SBX:
         instance.__bass = SBXFeature.from_dict(data["bass"])
         instance.__smart_volume = SmartVolumeSBXFeature.from_dict(data["smart_volume"])
         instance.__dialog_plus = SBXFeature.from_dict(data["dialog_plus"])
+        return instance
+
+
+class Profile:
+    class Name(Enum):
+        GAMING = "gaming"
+        MUSIC = "music"
+        CINEMA = "cinema"
+        SPECIAL = "special"
+
+        def serialize(self) -> str:
+            return self.value
+
+        @staticmethod
+        def deserialize(value: str) -> "Profile.Name":
+            for profile_name in Profile.Name:
+                if profile_name.value == value:
+                    return profile_name
+            raise ValueError(f"No profile with name '{value}' exists!")
+
+    def __init__(self):
+        self.__profile_name: Profile.Name | None = None
+        self.__sbx: SBX | None = None
+
+    @classmethod
+    def init(cls, profile_name: Name) -> "Profile":
+        instance = cls()
+        instance.__profile_name = profile_name
+        instance.__sbx = SBX.default()
+        return instance
+
+    def get_sbx(self) -> SBX:
+        return self.__sbx
+
+    def to_dict(self):
+        return {
+            "profile_name": self.__profile_name.value,
+            "sbx": self.__sbx.to_dict()
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Profile":
+        instance = cls()
+        instance.__profile_name = Profile.Name.deserialize(data["profile_name"])
+        instance.__sbx = SBX.from_dict(data.get("sbx", {}))
+        return instance
+
+
+class Profiles:
+    def __init__(self) -> None:
+        self.__selected_profile: Profile.Name | None = None
+        self.__profiles: dict[Profile.Name, Profile] | None = None
+
+    @classmethod
+    def default(cls) -> "Profiles":
+        instance = cls()
+        instance.__selected_profile = Profile.Name.GAMING
+        instance.__profiles = {
+            Profile.Name.GAMING: Profile.init(Profile.Name.GAMING),
+            Profile.Name.MUSIC: Profile.init(Profile.Name.MUSIC),
+            Profile.Name.CINEMA: Profile.init(Profile.Name.CINEMA),
+            Profile.Name.SPECIAL: Profile.init(Profile.Name.SPECIAL),
+        }
+        return instance
+
+    def get_sbx(self):
+        return self.__profiles.get(self.__selected_profile).get_sbx()
+
+    def to_dict(self) -> dict:
+        return {
+            "selected_profile": self.__selected_profile.serialize(),
+            "profiles": {
+                Profile.Name.GAMING.serialize(): self.__profiles.get(Profile.Name.GAMING).to_dict(),
+                Profile.Name.MUSIC.serialize(): self.__profiles.get(Profile.Name.MUSIC).to_dict(),
+                Profile.Name.CINEMA.serialize(): self.__profiles.get(Profile.Name.CINEMA).to_dict(),
+                Profile.Name.SPECIAL.serialize(): self.__profiles.get(Profile.Name.SPECIAL).to_dict(),
+            },
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Profiles":
+        instance = cls()
+
+        # deserialize
+        instance.__selected_profile = Profile.Name.deserialize(data["selected_profile"])
+        instance.__profiles = {}
+        for profile_name_value in data["profiles"]:
+            instance.__profiles[Profile.Name.deserialize(profile_name_value)] = Profile.from_dict(
+                data["profiles"][profile_name_value])
+
+        # validate profiles count
+        expected_profile_count = len(Profile.Name)
+        actual_profile_count = len(instance.__profiles)
+        if expected_profile_count != actual_profile_count:
+            raise RuntimeError(
+                f"An error occurred deserializing the profiles. Expected {expected_profile_count} profiles, but got {actual_profile_count} profiles!")
+
         return instance

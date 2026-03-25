@@ -6,21 +6,41 @@ class Mixer:
     """Mixer audio component."""
 
     def __init__(self):
-        self.__playback_mute: bool = False
-        self.__monitoring_line_in_mute: bool = False
-        self.__monitoring_line_in_volumes: dict[Channel, int] = {channel: 50 for channel in BOTH_CHANNELS}
-        self.__monitoring_external_mic_mute: bool = False
-        self.__monitoring_external_mic_volumes: dict[Channel, int] = {channel: 50 for channel in BOTH_CHANNELS}
-        self.__monitoring_spdif_in_mute: bool = False
-        self.__monitoring_spdif_in_volumes: dict[Channel, int] = {channel: 50 for channel in BOTH_CHANNELS}
-        self.__recording_line_in_mute: bool = False
-        self.__recording_line_in_volumes: dict[Channel, int] = {channel: 50 for channel in BOTH_CHANNELS}
-        self.__recording_external_mic_mute: bool = False
-        self.__recording_external_mic_volumes: dict[Channel, int] = {channel: 50 for channel in BOTH_CHANNELS}
-        self.__recording_spdif_in_mute: bool = False
-        self.__recording_spdif_in_volumes: dict[Channel, int] = {channel: 50 for channel in BOTH_CHANNELS}
-        self.__recording_what_u_hear_mute: bool = False
-        self.__recording_what_u_hear_volumes: dict[Channel, int] = {channel: 50 for channel in BOTH_CHANNELS}
+        self.__playback_mute: bool | None = None
+        self.__monitoring_line_in_mute: bool | None = None
+        self.__monitoring_line_in_volumes: dict[Channel, int] | None = None
+        self.__monitoring_external_mic_mute: bool | None = None
+        self.__monitoring_external_mic_volumes: dict[Channel, int] | None = None
+        self.__monitoring_spdif_in_mute: bool | None = None
+        self.__monitoring_spdif_in_volumes: dict[Channel, int] | None = None
+        self.__recording_line_in_mute: bool | None = None
+        self.__recording_line_in_volumes: dict[Channel, int] | None = None
+        self.__recording_external_mic_mute: bool | None = None
+        self.__recording_external_mic_volumes: dict[Channel, int] | None = None
+        self.__recording_spdif_in_mute: bool | None = None
+        self.__recording_spdif_in_volumes: dict[Channel, int] | None = None
+        self.__recording_what_u_hear_mute: bool | None = None
+        self.__recording_what_u_hear_volumes: dict[Channel, int] | None = None
+
+    @classmethod
+    def default(cls):
+        instance = cls()
+        instance.__playback_mute = False
+        instance.__monitoring_line_in_mute = False
+        instance.__monitoring_line_in_volumes = {channel: 50 for channel in BOTH_CHANNELS}
+        instance.__monitoring_external_mic_mute = False
+        instance.__monitoring_external_mic_volumes = {channel: 50 for channel in BOTH_CHANNELS}
+        instance.__monitoring_spdif_in_mute = False
+        instance.__monitoring_spdif_in_volumes = {channel: 50 for channel in BOTH_CHANNELS}
+        instance.__recording_line_in_mute = False
+        instance.__recording_line_in_volumes = {channel: 50 for channel in BOTH_CHANNELS}
+        instance.__recording_external_mic_mute = False
+        instance.__recording_external_mic_volumes = {channel: 50 for channel in BOTH_CHANNELS}
+        instance.__recording_spdif_in_mute = False
+        instance.__recording_spdif_in_volumes = {channel: 50 for channel in BOTH_CHANNELS}
+        instance.__recording_what_u_hear_mute = False
+        instance.__recording_what_u_hear_volumes = {channel: 50 for channel in BOTH_CHANNELS}
+        return instance
 
     @staticmethod
     def __validate_volume_percent(volume_percent: int) -> None:
@@ -190,6 +210,8 @@ class Mixer:
     @classmethod
     def from_dict(cls, data: dict) -> "Mixer":
         instance = cls()
+
+        # deserialize mute fields
         for field in (
                 "playback_mute",
                 "monitoring_line_in_mute",
@@ -201,19 +223,24 @@ class Mixer:
                 "recording_what_u_hear_mute",
         ):
             setattr(instance, f"_{cls.__name__}__{field}", data.get(field, False))
-        for vol_key, vol_dict in (
-                ("monitoring_line_in_volumes", instance.__monitoring_line_in_volumes),
-                ("monitoring_external_mic_volumes", instance.__monitoring_external_mic_volumes),
-                ("monitoring_spdif_in_volumes", instance.__monitoring_spdif_in_volumes),
-                ("recording_line_in_volumes", instance.__recording_line_in_volumes),
-                ("recording_external_mic_volumes", instance.__recording_external_mic_volumes),
-                ("recording_spdif_in_volumes", instance.__recording_spdif_in_volumes),
-                ("recording_what_u_hear_volumes", instance.__recording_what_u_hear_volumes),
+
+        # deserialize volumes
+        for field in (
+                "monitoring_line_in_volumes",
+                "monitoring_external_mic_volumes",
+                "monitoring_spdif_in_volumes",
+                "recording_line_in_volumes",
+                "recording_external_mic_volumes",
+                "recording_spdif_in_volumes",
+                "recording_what_u_hear_volumes"
         ):
-            for name, v in data.get(vol_key, {}).items():
+            volumes_dict = {}
+            for channel_text, volume in data.get(field, {}).items():
                 try:
-                    ch = deserialize_channel(channel_text=name)
-                    vol_dict[ch] = int(v)
+                    ch = deserialize_channel(channel_text=channel_text)
+                    volumes_dict[ch] = int(volume)
                 except (KeyError, TypeError) as e:
-                    raise RuntimeError(f"Unknown channel '{name}': {e}")
+                    raise RuntimeError(f"Unknown channel '{channel_text}': {e}")
+            setattr(instance, f"_{cls.__name__}__{field}", volumes_dict)
+
         return instance

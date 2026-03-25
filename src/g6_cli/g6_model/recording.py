@@ -7,17 +7,33 @@ class Recording:
     """Recording audio component."""
 
     def __init__(self):
-        self.__mute: bool = False
-        self.__mic_recording_volumes: dict[Channel, int] = {channel: 50 for channel in BOTH_CHANNELS}
-        self.__mic_boost: int = 0
-        self.__mic_monitoring_mute: bool = False
-        self.__mic_monitoring_volumes: dict[Channel, int] = {channel: 50 for channel in BOTH_CHANNELS}
-        self.__voice_clarity_enabled: bool = False
-        self.__voice_clarity_noise_reduction_level: int = 0
-        self.__voice_clarity_acoustic_echo_cancellation_enabled: bool = False
-        self.__voice_clarity_smart_volume_enabled: bool = False
-        self.__voice_clarity_mic_equalizer_enabled: bool = False
-        self.__voice_clarity_mic_equalizer_preset: MicrophoneEqualizerPreset = list(MicrophoneEqualizerPreset)[0]
+        self.__mute: bool | None = None
+        self.__mic_recording_volumes: dict[Channel, int] | None = None
+        self.__mic_boost: int | None = None
+        self.__mic_monitoring_mute: bool | None = None
+        self.__mic_monitoring_volumes: dict[Channel, int] | None = None
+        self.__voice_clarity_enabled: bool | None = None
+        self.__voice_clarity_noise_reduction_level: int | None = None
+        self.__voice_clarity_acoustic_echo_cancellation_enabled: bool | None = None
+        self.__voice_clarity_smart_volume_enabled: bool | None = None
+        self.__voice_clarity_mic_equalizer_enabled: bool | None = None
+        self.__voice_clarity_mic_equalizer_preset: MicrophoneEqualizerPreset | None = None
+
+    @classmethod
+    def default(cls):
+        instance = cls()
+        instance.__mute = False
+        instance.__mic_recording_volumes = {channel: 50 for channel in BOTH_CHANNELS}
+        instance.__mic_boost = 0
+        instance.__mic_monitoring_mute = False
+        instance.__mic_monitoring_volumes = {channel: 50 for channel in BOTH_CHANNELS}
+        instance.__voice_clarity_enabled = False
+        instance.__voice_clarity_noise_reduction_level = 0
+        instance.__voice_clarity_acoustic_echo_cancellation_enabled = False
+        instance.__voice_clarity_smart_volume_enabled = False
+        instance.__voice_clarity_mic_equalizer_enabled = False
+        instance.__voice_clarity_mic_equalizer_preset = list(MicrophoneEqualizerPreset)[0]
+        return instance
 
     @staticmethod
     def __validate_mic_recording_volume(volume_percent: int) -> None:
@@ -206,18 +222,23 @@ class Recording:
         )
         instance.__voice_clarity_smart_volume_enabled = data.get("voice_clarity_smart_volume_enabled", False)
         instance.__voice_clarity_mic_equalizer_enabled = data.get("voice_clarity_mic_equalizer_enabled", False)
+
+        instance.__mic_recording_volumes = {}
         for name, v in data.get("mic_recording_volumes", {}).items():
             try:
                 ch = deserialize_channel(channel_text=name)
                 instance.__mic_recording_volumes[ch] = int(v)
             except (KeyError, TypeError) as e:
                 raise RuntimeError(f"Unknown channel '{name}': {e}")
+
+        instance.__mic_monitoring_volumes = {}
         for name, v in data.get("mic_monitoring_volumes", {}).items():
             try:
                 ch = deserialize_channel(channel_text=name)
                 instance.__mic_monitoring_volumes[ch] = int(v)
             except (KeyError, TypeError) as e:
                 raise RuntimeError(f"Unknown channel '{name}': {e}")
+
         preset_str = data.get("voice_clarity_mic_equalizer_preset")
         if preset_str:
             try:

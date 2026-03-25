@@ -2,10 +2,19 @@ class Lighting:
     """Lighting audio component."""
 
     def __init__(self):
-        self.__enabled: bool = False
-        self.__red: int = 0
-        self.__green: int = 0
-        self.__blue: int = 0
+        self.__enabled: bool | None = None
+        self.__red: int | None = None
+        self.__green: int | None = None
+        self.__blue: int | None = None
+
+    @classmethod
+    def default(cls):
+        instance = cls()
+        instance.__enabled = False
+        instance.__red = 0
+        instance.__green = 0
+        instance.__blue = 0
+        return instance
 
     def get_enabled(self) -> bool:
         """

@@ -2,12 +2,12 @@ import json
 from typing import Any
 
 from g6_cli.g6_model.decoder import Decoder
-from g6_cli.g6_model.serialization import DeserializationError, SerializationError
 from g6_cli.g6_model.lighting import Lighting
 from g6_cli.g6_model.mixer import Mixer
 from g6_cli.g6_model.playback import Playback
 from g6_cli.g6_model.recording import Recording
-from g6_cli.g6_model.sbx import SBX
+from g6_cli.g6_model.sbx import SBX, Profile, Profiles
+from g6_cli.g6_model.serialization import DeserializationError, SerializationError
 
 
 class G6Model:
@@ -19,18 +19,18 @@ class G6Model:
     """
 
     def __init__(self):
-        self.__decoder: Decoder = Decoder()
-        self.__sbx: SBX = SBX()
-        self.__playback: Playback = Playback()
-        self.__recording: Recording = Recording()
-        self.__lighting: Lighting = Lighting()
-        self.__mixer: Mixer = Mixer()
+        self.__profiles = Profiles.default()
+        self.__decoder: Decoder = Decoder.default()
+        self.__playback: Playback = Playback.default()
+        self.__recording: Recording = Recording.default()
+        self.__lighting: Lighting = Lighting.default()
+        self.__mixer: Mixer = Mixer.default()
+
+    def get_sbx(self) -> SBX:
+        return self.__profiles.get_sbx()
 
     def get_decoder(self) -> Decoder:
         return self.__decoder
-
-    def get_sbx(self) -> SBX:
-        return self.__sbx
 
     def get_playback(self) -> Playback:
         return self.__playback
@@ -46,8 +46,8 @@ class G6Model:
 
     def to_dict(self) -> dict:
         return {
+            "profiles": self.__profiles.to_dict(),
             "decoder": self.__decoder.to_dict(),
-            "sbx": self.__sbx.to_dict(),
             "playback": self.__playback.to_dict(),
             "recording": self.__recording.to_dict(),
             "lighting": self.__lighting.to_dict(),
@@ -75,8 +75,8 @@ class G6Model:
                 data: dict[str, Any] = json.load(f)
 
             model = cls()
+            model.__profiles = Profiles.from_dict(data.get("profiles", {}))
             model.__decoder = Decoder.from_dict(data.get("decoder", {}))
-            model.__sbx = SBX.from_dict(data.get("sbx", {}))
             model.__playback = Playback.from_dict(data.get("playback", {}))
             model.__recording = Recording.from_dict(data.get("recording", {}))
             model.__lighting = Lighting.from_dict(data.get("lighting", {}))

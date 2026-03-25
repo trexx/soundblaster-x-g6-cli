@@ -14,14 +14,27 @@ class Playback:
     """Playback audio component."""
 
     def __init__(self):
-        self.__mute: bool = False
-        self.__is_speakers: bool = True
-        self.__speakers_audio_mode: AudioMode = AudioMode.AM_STEREO
-        self.__headphones_audio_mode: AudioMode = AudioMode.AM_STEREO
-        self.__volumes: dict[Channel, int] = {channel: 50 for channel in BOTH_CHANNELS}
-        self.__direct_mode_enabled: bool = False
-        self.__spdif_out_direct_mode_enabled: bool = False
-        self.__filter: PlaybackFilter = list(PlaybackFilter)[0]
+        self.__mute: bool | None = None
+        self.__is_speakers: bool | None = None
+        self.__speakers_audio_mode: AudioMode | None = None
+        self.__headphones_audio_mode: AudioMode | None = None
+        self.__volumes: dict[Channel, int] | None = None
+        self.__direct_mode_enabled: bool | None = None
+        self.__spdif_out_direct_mode_enabled: bool | None = None
+        self.__filter: PlaybackFilter | None = None
+
+    @classmethod
+    def default(cls):
+        instance = cls()
+        instance.__mute = False
+        instance.__is_speakers = True
+        instance.__speakers_audio_mode = AudioMode.AM_STEREO
+        instance.__headphones_audio_mode = AudioMode.AM_STEREO
+        instance.__volumes = {channel: 50 for channel in BOTH_CHANNELS}
+        instance.__direct_mode_enabled = False
+        instance.__spdif_out_direct_mode_enabled = False
+        instance.__filter = list(PlaybackFilter)[0]
+        return instance
 
     def get_mute(self) -> bool:
         """
@@ -148,6 +161,7 @@ class Playback:
             raise ValueError(f"Unknown AudioMode value: '{audio_mode_text}'!")
 
         instance = cls()
+
         instance.__mute = data.get("mute", False)
         instance.__is_speakers = data.get("is_speakers", True)
         instance.__speakers_audio_mode = deserialize_audio_mode(
@@ -156,12 +170,15 @@ class Playback:
             data.get("headphones_audio_mode", AudioMode.AM_STEREO.value))
         instance.__direct_mode_enabled = data.get("direct_mode_enabled", False)
         instance.__spdif_out_direct_mode_enabled = data.get("spdif_out_direct_mode_enabled", False)
+
+        instance.__volumes = {}
         for name, v in data.get("volumes", {}).items():
             try:
                 ch = deserialize_channel(channel_text=name)
                 instance.__volumes[ch] = int(v)
             except (KeyError, TypeError) as e:
                 raise RuntimeError(f"Unknown channel '{name}': {e}")
+
         filter_str = data.get("filter")
         if filter_str:
             try:
