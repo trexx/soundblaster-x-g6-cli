@@ -8,6 +8,7 @@ import pytest
 
 import g6_cli.g6_api as g6_api
 from g6_cli.g6_model import G6Model
+from g6_cli.g6_model import Profile
 from g6_cli.g6_model.playback import AudioMode
 from g6_cli.g6_spec import (
     Channel,
@@ -167,14 +168,15 @@ def test_model_serialization_single_field(
         name: str,  # not used in body, but helps with readability & debugging
 ) -> None:
     model = api.get_model()
-    comp_obj = getattr(model, f"get_{component}")()
+    kwargs = {"profile_name" : Profile.Name.SPECIAL} if component == "sbx" else {}
+    comp_obj = getattr(model, f"get_{component}")(**kwargs)
 
     # Default value round-trip
     default_value = getter(comp_obj)
     api.save_model(temp_model_path)
 
     loaded = G6Model.from_json(temp_model_path)
-    loaded_comp = getattr(loaded, f"get_{component}")()
+    loaded_comp = getattr(loaded, f"get_{component}")(**kwargs)
     assert getter(loaded_comp) == default_value
 
     # Changed value round-trip
@@ -186,7 +188,7 @@ def test_model_serialization_single_field(
     api.save_model(temp_model_path)
 
     loaded = G6Model.from_json(temp_model_path)
-    loaded_comp = getattr(loaded, f"get_{component}")()
+    loaded_comp = getattr(loaded, f"get_{component}")(**kwargs)
     assert getter(loaded_comp) == test_value
 
 
@@ -203,8 +205,8 @@ def test_full_model_roundtrip(api: g6_api.G6Api, temp_model_path: str) -> None:
     model.get_decoder().set_mode(DecoderMode.FULL)
     model.get_lighting().set_rgb(100, 200, 50)
     model.get_recording().set_mic_boost(20)
-    model.get_sbx().set_surround_toggle(True)
-    model.get_sbx().set_surround_slider(75)
+    model.get_sbx(profile_name=Profile.Name.SPECIAL).set_surround_toggle(True)
+    model.get_sbx(profile_name=Profile.Name.SPECIAL).set_surround_slider(75)
     model.get_mixer().set_monitoring_line_in_volume(60, {Channel.CHANNEL_1})
 
     # Save

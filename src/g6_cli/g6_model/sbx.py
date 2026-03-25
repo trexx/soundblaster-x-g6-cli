@@ -56,7 +56,7 @@ class SmartVolumeSBXFeature(SBXFeature):
         super().__init__(name=name, toggle_value=toggle_value, slider_value=slider_value)
         self.__special_value = special_value
 
-    def get_special_value(self) -> SmartVolumeSpecialHex:
+    def get_special_value(self) -> SmartVolumeSpecialHex | None:
         return self.__special_value
 
     def set_special_value(self, value: SmartVolumeSpecialHex) -> None:
@@ -236,10 +236,10 @@ class SBX:
 
 class Profile:
     class Name(Enum):
-        GAMING = "gaming"
-        MUSIC = "music"
-        CINEMA = "cinema"
-        SPECIAL = "special"
+        GAMING = "Gaming"
+        MUSIC = "Music"
+        CINEMA = "Cinema"
+        SPECIAL = "Special"
 
         def serialize(self) -> str:
             return self.value
@@ -250,6 +250,12 @@ class Profile:
                 if profile_name.value == value:
                     return profile_name
             raise ValueError(f"No profile with name '{value}' exists!")
+
+        def __str__(self):
+            return self.value
+
+        def __repr__(self):
+            return self.__str__()
 
     def __init__(self):
         self.__profile_name: Profile.Name | None = None
@@ -296,8 +302,14 @@ class Profiles:
         }
         return instance
 
-    def get_sbx(self):
-        return self.__profiles.get(self.__selected_profile).get_sbx()
+    def get_sbx_profile_selection(self) -> Profile.Name | None:
+        return self.__selected_profile
+
+    def set_sbx_profile_selection(self, profile_name: Profile.Name) -> None:
+        self.__selected_profile = profile_name
+
+    def get_sbx(self, profile_name: Profile.Name) -> SBX:
+        return self.__profiles.get(profile_name).get_sbx()
 
     def to_dict(self) -> dict:
         return {

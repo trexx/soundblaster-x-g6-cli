@@ -35,8 +35,14 @@ class G6Model:
         self.__lighting: Lighting = Lighting.default()
         self.__mixer: Mixer = Mixer.default()
 
-    def get_sbx(self) -> SBX:
-        return self.__profiles.get_sbx()
+    def get_sbx_profile_selection(self) -> Profile.Name | None:
+        return self.__profiles.get_sbx_profile_selection()
+
+    def set_sbx_profile_selection(self, profile_name: Profile.Name) -> None:
+        self.__profiles.set_sbx_profile_selection(profile_name=profile_name)
+
+    def get_sbx(self, profile_name: Profile.Name) -> SBX:
+        return self.__profiles.get_sbx(profile_name=profile_name)
 
     def get_decoder(self) -> Decoder:
         return self.__decoder

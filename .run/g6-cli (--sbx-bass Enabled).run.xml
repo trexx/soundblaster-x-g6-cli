@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="g6-cli (--set-output Headphones, --dry-run)" type="PythonConfigurationType" factoryName="Python" folderName="set-output">
+  <configuration default="false" name="g6-cli (--sbx-bass Enabled)" type="PythonConfigurationType" factoryName="Python" folderName="bass">
     <module name="code" />
     <option name="ENV_FILES" value="" />
     <option name="INTERPRETER_OPTIONS" value="" />
@@ -15,7 +15,7 @@
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <option name="RUN_TOOL" value="" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/g6_cli.py" />
-    <option name="PARAMETERS" value="--set-output Headphones --dry-run" />
+    <option name="PARAMETERS" value="--sbx-profile Special --sbx-bass Enabled" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />

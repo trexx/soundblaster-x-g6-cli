@@ -1,8 +1,10 @@
 import argparse
 import os.path
+import sys
 import tempfile
 
 from g6_cli.g6_api import G6Api, DEFAULT_MODEL_PATH
+from g6_cli.g6_model import Profile
 from g6_cli.g6_spec import (
     AudioFeature,
     Channel,
@@ -326,43 +328,51 @@ def parse_cli_args():
     #
     sbx_hid_group = parser.add_argument_group('SBX [HID]',
                                               description="Control SBX effects using the G6's USB HID interface.")
+    sbx_hid_group.add_argument('--sbx-profile', required=False, type=Profile.Name.deserialize,
+                               choices=list(Profile.Name),
+                               help="Defines the SBX profile to use for updating single SBX effects. May not be used together with --sbx-profile-switch.")
+    sbx_hid_group.add_argument('--sbx-profile-switch', required=False, type=Profile.Name.deserialize,
+                               choices=list(Profile.Name),
+                               help="Switch to the specified SBX profile. May not be used together with --sbx-profile.")
+    sbx_hid_group.add_argument('--sbx-profile-print', required=False, action='store_true',
+                               help="Prints the name of the current active SBX profile to console.")
     sbx_hid_group.add_argument('--sbx-surround', required=False, type=str, choices=enabled_disabled,
                                metavar="{Enabled|Disabled}",
-                               help='Enables or disables the Surround sound effect.')
+                               help='Enables or disables the Surround sound effect. Specify the SBX profile to update with --sbx-profile.')
     sbx_hid_group.add_argument('--sbx-surround-value', required=False, type=int, choices=numbers_0_100,
                                metavar="{0..100}",
-                               help='Set the value for the Surround sound effect as integer.')
+                               help='Set the value for the Surround sound effect as integer. Specify the SBX profile to update with --sbx-profile.')
 
     sbx_hid_group.add_argument('--sbx-crystalizer', required=False, type=str, choices=enabled_disabled,
                                metavar="{Enabled|Disabled}",
-                               help='Enables or disables the Crystalizer sound effect.')
+                               help='Enables or disables the Crystalizer sound effect. Specify the SBX profile to update with --sbx-profile.')
     sbx_hid_group.add_argument('--sbx-crystalizer-value', required=False, type=int, choices=numbers_0_100,
                                metavar="{0..100}",
-                               help='Set the value for the Crystalizer sound effect as integer.')
+                               help='Set the value for the Crystalizer sound effect as integer. Specify the SBX profile to update with --sbx-profile.')
 
     sbx_hid_group.add_argument('--sbx-bass', required=False, type=str, choices=enabled_disabled,
                                metavar="{Enabled|Disabled}",
-                               help='Enables or disables the Bass sound effect.')
+                               help='Enables or disables the Bass sound effect. Specify the SBX profile to update with --sbx-profile.')
     sbx_hid_group.add_argument('--sbx-bass-value', required=False, type=int, choices=numbers_0_100,
                                metavar="{0..100}",
-                               help='Set the value for the Bass sound effect as integer.')
+                               help='Set the value for the Bass sound effect as integer. Specify the SBX profile to update with --sbx-profile.')
 
     sbx_hid_group.add_argument('--sbx-smart-volume', required=False, type=str, choices=enabled_disabled,
                                metavar="{Enabled|Disabled}",
-                               help='Enables or disables the Smart-Volume sound effect.')
+                               help='Enables or disables the Smart-Volume sound effect. Specify the SBX profile to update with --sbx-profile.')
     sbx_hid_group.add_argument('--sbx-smart-volume-value', required=False, type=int, choices=numbers_0_100,
                                metavar="{0..100}",
-                               help='Set the value for the Smart-Volume sound effect as value.')
+                               help='Set the value for the Smart-Volume sound effect as value. Specify the SBX profile to update with --sbx-profile.')
     sbx_hid_group.add_argument('--sbx-smart-volume-special-value', required=False, type=str, choices=['Night', 'Loud'],
                                metavar="{Night|Loud}",
-                               help='Set the value for the Smart-Volume sound effect as string (supersedes --set-smart-volume-value).')
+                               help='Set the value for the Smart-Volume sound effect as string (supersedes --set-smart-volume-value). Specify the SBX profile to update with --sbx-profile.')
 
     sbx_hid_group.add_argument('--sbx-dialog-plus', required=False, type=str, choices=enabled_disabled,
                                metavar="{Enabled|Disabled}",
-                               help='Enables or disables the Dialog-Plus sound effect.')
+                               help='Enables or disables the Dialog-Plus sound effect. Specify the SBX profile to update with --sbx-profile.')
     sbx_hid_group.add_argument('--sbx-dialog-plus-value', required=False, type=int, choices=numbers_0_100,
                                metavar="{0..100}",
-                               help='Set the value for the Dialog-Plus sound effect as integer.')
+                               help='Set the value for the Dialog-Plus sound effect as integer. Specify the SBX profile to update with --sbx-profile.')
 
     # parse args and verify
     args = parser.parse_args()
@@ -410,6 +420,8 @@ def parse_cli_args():
             and args.recording_voice_clarity_smart_volume is None \
             and args.recording_voice_clarity_mic_eq is None \
             and args.recording_voice_clarity_mic_eq_preset is None \
+            and args.sbx_profile is None \
+            and args.sbx_profile_switch is None \
             and args.sbx_surround is None \
             and args.sbx_surround_value is None \
             and args.sbx_crystalizer is None \
@@ -422,12 +434,34 @@ def parse_cli_args():
             and args.sbx_dialog_plus is None \
             and args.sbx_dialog_plus_value is None:
         message = 'No meaningful argument has been specified!'
-        print(message)
+        print(message, file=sys.stderr)
         parser.print_help()
         raise ValueError(message)
     elif args.toggle_output is True and args.set_output is not None:
         message = 'Only one of the following CLI arguments may be specified: \'--toggle-output', '--set-output\'!'
-        print(message)
+        print(message, file=sys.stderr)
+        parser.print_help()
+        raise ValueError(message)
+    elif args.sbx_profile is None and (
+            args.sbx_surround is not None
+            or args.sbx_surround_value is not None
+            or args.sbx_crystalizer is not None
+            or args.sbx_crystalizer_value is not None
+            or args.sbx_bass is not None
+            or args.sbx_bass_value is not None
+            or args.sbx_smart_volume is not None
+            or args.sbx_smart_volume_value is not None
+            or args.sbx_smart_volume_special_value is not None
+            or args.sbx_dialog_plus is not None
+            or args.sbx_dialog_plus_value is not None
+    ):
+        message = "The SBX profile to use must be specified with '--sbx-profile' when updating an SBX effect!"
+        print(message, file=sys.stderr)
+        parser.print_help()
+        raise ValueError(message)
+    elif args.sbx_profile is not None and args.sbx_profile_switch is not None:
+        message = "Only one of --sbx-profile and --sbx_profile_switch may be specified!"
+        print(message, file=sys.stderr)
         parser.print_help()
         raise ValueError(message)
 
@@ -684,41 +718,62 @@ def device_set_audio_effects(api: G6Api, args: argparse.Namespace):
         #
         # SBX Effects
         #
-        # surround
-        if args.sbx_surround is not None:
-            api.sbx_toggle(AudioFeature.SURROUND_TOGGLE, to_bool(args.sbx_surround))
-        if args.sbx_surround_value is not None:
-            api.sbx_slider(AudioFeature.SURROUND_SLIDER, args.sbx_surround_value)
-        # crystalizer
-        if args.sbx_crystalizer is not None:
-            api.sbx_toggle(AudioFeature.CRYSTALIZER_TOGGLE, to_bool(args.sbx_crystalizer))
-        if args.sbx_crystalizer_value is not None:
-            api.sbx_slider(AudioFeature.CRYSTALIZER_SLIDER, args.sbx_crystalizer_value)
-        # bass
-        if args.sbx_bass is not None:
-            api.sbx_toggle(AudioFeature.BASS_TOGGLE, to_bool(args.sbx_bass))
-        if args.sbx_bass_value is not None:
-            api.sbx_slider(AudioFeature.BASS_SLIDER, args.sbx_bass_value)
-        # smart-volume
-        if args.sbx_smart_volume is not None:
-            api.sbx_toggle(AudioFeature.SMART_VOLUME_TOGGLE, to_bool(args.sbx_smart_volume))
-        if args.sbx_smart_volume_value is not None:
-            api.sbx_slider(AudioFeature.SMART_VOLUME_SLIDER, args.sbx_smart_volume_value)
-        if args.sbx_smart_volume_special_value is not None:
-            if args.sbx_smart_volume_special_value == 'Night':
-                api.sbx_smart_volume_special(SmartVolumeSpecialHex.SMART_VOLUME_NIGHT)
-            elif args.sbx_smart_volume_special_value == 'Loud':
-                api.sbx_smart_volume_special(SmartVolumeSpecialHex.SMART_VOLUME_LOUD)
-            else:
-                raise ValueError(
-                    f"Expected one of the following values for --sbx-smart-volume-special-value: "
-                    f"['Night', 'Loud'], but was '{args.sbx_smart_volume_special_value}'!"
+        # profile
+        if args.sbx_profile_print:
+            print(f"Current SBX Profile: {api.sbx_profile_selection()}")
+        if args.sbx_profile_switch is not None:
+            api.sbx_profile_switch(profile_name=args.sbx_profile_switch)
+            if args.sbx_profile_print:
+                print(f"New SBX Profile: {args.sbx_profile_switch}")
+        # effects
+        if args.sbx_profile is not None:
+            # surround
+            if args.sbx_surround is not None:
+                api.sbx_toggle(profile_name=args.sbx_profile, audio_feature=AudioFeature.SURROUND_TOGGLE,
+                               activate=to_bool(args.sbx_surround))
+            if args.sbx_surround_value is not None:
+                api.sbx_slider(profile_name=args.sbx_profile, audio_feature=AudioFeature.SURROUND_SLIDER,
+                               value=args.sbx_surround_value)
+            # crystalizer
+            if args.sbx_crystalizer is not None:
+                api.sbx_toggle(profile_name=args.sbx_profile, audio_feature=AudioFeature.CRYSTALIZER_TOGGLE,
+                               activate=to_bool(args.sbx_crystalizer))
+            if args.sbx_crystalizer_value is not None:
+                api.sbx_slider(profile_name=args.sbx_profile, audio_feature=AudioFeature.CRYSTALIZER_SLIDER,
+                               value=args.sbx_crystalizer_value)
+            # bass
+            if args.sbx_bass is not None:
+                api.sbx_toggle(profile_name=args.sbx_profile, audio_feature=AudioFeature.BASS_TOGGLE,
+                               activate=to_bool(args.sbx_bass))
+            if args.sbx_bass_value is not None:
+                api.sbx_slider(profile_name=args.sbx_profile, audio_feature=AudioFeature.BASS_SLIDER,
+                               value=args.sbx_bass_value)
+            # smart-volume
+            if args.sbx_smart_volume is not None:
+                api.sbx_toggle(profile_name=args.sbx_profile, audio_feature=AudioFeature.SMART_VOLUME_TOGGLE,
+                               activate=to_bool(args.sbx_smart_volume))
+            if args.sbx_smart_volume_value is not None:
+                api.sbx_slider(profile_name=args.sbx_profile, audio_feature=AudioFeature.SMART_VOLUME_SLIDER,
+                               value=args.sbx_smart_volume_value)
+            if args.sbx_smart_volume_special_value is not None:
+                if args.sbx_smart_volume_special_value == 'Night':
+                    api.sbx_smart_volume_special(profile_name=args.sbx_profile,
+                                                 smart_volume_special_hex=SmartVolumeSpecialHex.SMART_VOLUME_NIGHT)
+                elif args.sbx_smart_volume_special_value == 'Loud':
+                    api.sbx_smart_volume_special(profile_name=args.sbx_profile,
+                                                 smart_volume_special_hex=SmartVolumeSpecialHex.SMART_VOLUME_LOUD)
+                else:
+                    raise ValueError(
+                        f"Expected one of the following values for --sbx-smart-volume-special-value: "
+                        f"['Night', 'Loud'], but was '{args.sbx_smart_volume_special_value}'!"
                 )
-        # dialog-plus
-        if args.sbx_dialog_plus is not None:
-            api.sbx_toggle(AudioFeature.DIALOG_PLUS_TOGGLE, to_bool(args.sbx_dialog_plus))
-        if args.sbx_dialog_plus_value is not None:
-            api.sbx_slider(AudioFeature.DIALOG_PLUS_SLIDER, args.sbx_dialog_plus_value)
+            # dialog-plus
+            if args.sbx_dialog_plus is not None:
+                api.sbx_toggle(profile_name=args.sbx_profile, audio_feature=AudioFeature.DIALOG_PLUS_TOGGLE,
+                               activate=to_bool(args.sbx_dialog_plus))
+            if args.sbx_dialog_plus_value is not None:
+                api.sbx_slider(profile_name=args.sbx_profile, audio_feature=AudioFeature.DIALOG_PLUS_SLIDER,
+                               value=args.sbx_dialog_plus_value)
     finally:
         # Release the USB AudioControl interface if it has been claimed.
         if args.claim_and_release and api.is_audio_interface_available():

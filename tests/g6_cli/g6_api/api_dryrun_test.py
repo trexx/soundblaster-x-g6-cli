@@ -5,6 +5,7 @@ from collections.abc import Callable
 import pytest
 
 import g6_cli.g6_api as g6_api
+from g6_cli.g6_model import Profile
 from g6_cli.g6_spec import AudioFeature, PlaybackFilter, SmartVolumeSpecialHex
 from g6_cli.g6_spec.decoder import DecoderMode
 from g6_cli.g6_spec.recording import MicrophoneEqualizerPreset
@@ -21,6 +22,7 @@ ArgFactory = Callable[[], tuple[tuple, dict]]
 # noinspection PyListCreation
 CASES: list[tuple[str, ArgFactory]] = []
 
+# @formatter:off
 # ─── Playback ───
 CASES.append(("playback_mute", lambda: ((True,), {})))
 CASES.append(("playback_mute", lambda: ((False,), {})))
@@ -119,15 +121,15 @@ for preset in MicrophoneEqualizerPreset:
 
 # ─── SBX ───
 for audio_feature in AudioFeature:
-    CASES.append(("sbx_toggle", lambda: ((), {"audio_feature": audio_feature, "activate": True})))
-    CASES.append(("sbx_toggle", lambda: ((), {"audio_feature": audio_feature, "activate": False})))
+    CASES.append(("sbx_toggle", lambda: ((), {"profile_name": Profile.Name.SPECIAL, "audio_feature": audio_feature, "activate": True})))
+    CASES.append(("sbx_toggle", lambda: ((), {"profile_name": Profile.Name.SPECIAL, "audio_feature": audio_feature, "activate": False})))
 for audio_feature in AudioFeature:
-    CASES.append(("sbx_slider", lambda: ((), {"audio_feature": audio_feature, "value": 0})))
-    CASES.append(("sbx_slider", lambda: ((), {"audio_feature": audio_feature, "value": 42})))
-    CASES.append(("sbx_slider", lambda: ((), {"audio_feature": audio_feature, "value": 100})))
+    CASES.append(("sbx_slider", lambda: ((), {"profile_name": Profile.Name.SPECIAL, "audio_feature": audio_feature, "value": 0})))
+    CASES.append(("sbx_slider", lambda: ((), {"profile_name": Profile.Name.SPECIAL, "audio_feature": audio_feature, "value": 42})))
+    CASES.append(("sbx_slider", lambda: ((), {"profile_name": Profile.Name.SPECIAL, "audio_feature": audio_feature, "value": 100})))
 for smart_volume_special_hex in SmartVolumeSpecialHex:
-    CASES.append(("sbx_smart_volume_special", lambda: ((), {"smart_volume_special_hex": smart_volume_special_hex})))
-
+    CASES.append(("sbx_smart_volume_special", lambda: ((), {"profile_name": Profile.Name.SPECIAL, "smart_volume_special_hex": smart_volume_special_hex})))
+# @formatter:on
 
 @pytest.mark.parametrize(
     "method_name,args_factory",

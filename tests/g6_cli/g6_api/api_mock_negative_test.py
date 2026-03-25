@@ -8,6 +8,7 @@ import pytest
 import g6_cli.g6_api as g6_api
 from g6_cli.g6_core import G6Device
 from g6_cli.g6_spec import AudioFeature, Channel
+from g6_cli.g6_model import Profile
 
 
 @pytest.fixture()
@@ -92,8 +93,8 @@ NEGATIVE_HID_CASES.append(("lighting_enable_set_rgb", "lighting_enable_set_rgb_s
 NEGATIVE_HID_CASES.append(("lighting_enable_set_rgb", "lighting_enable_set_rgb_spec", lambda: ((), {"red": 0, "green": 0, "blue": 256}), "blue must be between 0 and 255, got 256"))
 
 # ─── SBX (hid) ───
-NEGATIVE_HID_CASES.append(("sbx_slider", "sbx_slider_spec", lambda: ((), {"audio_feature": AudioFeature.SURROUND_SLIDER, "value": -1}), "between 0 and 100, got -1"))
-NEGATIVE_HID_CASES.append(("sbx_slider", "sbx_slider_spec", lambda: ((), {"audio_feature": AudioFeature.SURROUND_SLIDER, "value": 101}), "between 0 and 100, got 101"))
+NEGATIVE_HID_CASES.append(("sbx_slider", "sbx_slider_spec", lambda: ((), {"profile_name": Profile.Name.SPECIAL, "audio_feature": AudioFeature.SURROUND_SLIDER, "value": -1}), "between 0 and 100, got -1"))
+NEGATIVE_HID_CASES.append(("sbx_slider", "sbx_slider_spec", lambda: ((), {"profile_name": Profile.Name.SPECIAL, "audio_feature": AudioFeature.SURROUND_SLIDER, "value": 101}), "between 0 and 100, got 101"))
 # @formatter:on
 
 

@@ -8,6 +8,7 @@ from g6_cli.g6_core import (
 )
 from g6_cli.g6_model import G6Model
 from g6_cli.g6_model.playback import AudioMode
+from g6_cli.g6_model.sbx import Profile
 from g6_cli.g6_spec import AudioFeature, PlaybackFilter, SmartVolumeSpecialHex, Channel, BOTH_CHANNELS
 from g6_cli.g6_spec.decoder import DecoderMode
 from g6_cli.g6_spec.decoder import decoder_mode as decoder_mode_spec
@@ -706,14 +707,54 @@ class G6Api:
 
     # ── SBX ──
 
-    def sbx_toggle(self, audio_feature: AudioFeature, activate: bool) -> None:
+    def sbx_profile_switch(self, profile_name: Profile.Name):
+        # send data to G6
+        sbx = self.__model.get_sbx(profile_name=profile_name)
+        ## surround
+        self.sbx_toggle(profile_name=profile_name, audio_feature=AudioFeature.SURROUND_TOGGLE,
+                        activate=sbx.get_surround_toggle())
+        self.sbx_slider(profile_name=profile_name, audio_feature=AudioFeature.SURROUND_SLIDER,
+                        value=sbx.get_surround_slider())
+        ## crystalizer
+        self.sbx_toggle(profile_name=profile_name, audio_feature=AudioFeature.CRYSTALIZER_TOGGLE,
+                        activate=sbx.get_crystalizer_toggle())
+        self.sbx_slider(profile_name=profile_name, audio_feature=AudioFeature.CRYSTALIZER_SLIDER,
+                        value=sbx.get_crystalizer_slider())
+        ## bass
+        self.sbx_toggle(profile_name=profile_name, audio_feature=AudioFeature.BASS_TOGGLE,
+                        activate=sbx.get_bass_toggle())
+        self.sbx_slider(profile_name=profile_name, audio_feature=AudioFeature.BASS_SLIDER, value=sbx.get_bass_slider())
+        ## smart volume
+        self.sbx_toggle(profile_name=profile_name, audio_feature=AudioFeature.SMART_VOLUME_TOGGLE,
+                        activate=sbx.get_smart_volume_toggle())
+        smart_volume_special = sbx.get_smart_volume_special()
+        if smart_volume_special is None:
+            self.sbx_slider(profile_name=profile_name, audio_feature=AudioFeature.SMART_VOLUME_SLIDER,
+                            value=sbx.get_smart_volume_slider())
+        else:
+            self.sbx_smart_volume_special(profile_name=profile_name, smart_volume_special_hex=smart_volume_special)
+        ## dialog plus
+        self.sbx_toggle(profile_name=profile_name, audio_feature=AudioFeature.DIALOG_PLUS_TOGGLE,
+                        activate=sbx.get_dialog_plus_toggle())
+        self.sbx_slider(profile_name=profile_name, audio_feature=AudioFeature.DIALOG_PLUS_SLIDER,
+                        value=sbx.get_dialog_plus_slider())
+
+        # update model
+        if self.__persist_model:
+            self.__model.set_sbx_profile_selection(profile_name=profile_name)
+            self.save_model()
+
+    def sbx_profile_selection(self) -> Profile.Name | None:
+        return self.__model.get_sbx_profile_selection()
+
+    def sbx_toggle(self, profile_name: Profile.Name, audio_feature: AudioFeature, activate: bool) -> None:
         # send data to G6
         hid_data_list = sbx_toggle_spec(audio_feature=audio_feature, activate=activate)
         self.__device.send_hid_data_to_device(hid_data_list=hid_data_list)
 
         # update model
         if self.__persist_model:
-            sbx = self.__model.get_sbx()
+            sbx = self.__model.get_sbx(profile_name=profile_name)
             match audio_feature:
                 case AudioFeature.SURROUND_TOGGLE:
                     sbx.set_surround_toggle(activate)
@@ -730,14 +771,14 @@ class G6Api:
     def sbx_toggle_available(self) -> bool:
         return self.__device.is_hid_interface_available()
 
-    def sbx_slider(self, audio_feature: AudioFeature, value: int) -> None:
+    def sbx_slider(self, profile_name: Profile.Name, audio_feature: AudioFeature, value: int) -> None:
         # send data to G6
         hid_data_list = sbx_slider_spec(audio_feature=audio_feature, value=value)
         self.__device.send_hid_data_to_device(hid_data_list=hid_data_list)
 
         # update model
         if self.__persist_model:
-            sbx = self.__model.get_sbx()
+            sbx = self.__model.get_sbx(profile_name=profile_name)
             match audio_feature:
                 case AudioFeature.SURROUND_SLIDER:
                     sbx.set_surround_slider(value)
@@ -754,13 +795,15 @@ class G6Api:
     def sbx_slider_available(self) -> bool:
         return self.__device.is_hid_interface_available()
 
-    def sbx_smart_volume_special(self, smart_volume_special_hex: SmartVolumeSpecialHex) -> None:
+    def sbx_smart_volume_special(self, profile_name: Profile.Name,
+                                 smart_volume_special_hex: SmartVolumeSpecialHex) -> None:
         # send data to G6
         hid_data_list = sbx_smart_volume_special_spec(smart_volume_special_hex=smart_volume_special_hex)
         self.__device.send_hid_data_to_device(hid_data_list=hid_data_list)
+
         # update model
         if self.__persist_model:
-            self.__model.get_sbx().set_smart_volume_special(smart_volume_special_hex)
+            self.__model.get_sbx(profile_name=profile_name).set_smart_volume_special(smart_volume_special_hex)
             self.save_model()
 
     def sbx_smart_volume_special_available(self) -> bool:

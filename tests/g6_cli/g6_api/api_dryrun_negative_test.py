@@ -5,6 +5,7 @@ from collections.abc import Callable
 import pytest
 
 import g6_cli.g6_api as g6_api
+from g6_cli.g6_model import Profile
 from g6_cli.g6_spec import AudioFeature, Channel
 
 
@@ -80,8 +81,8 @@ NEGATIVE_CASES.append(("lighting_enable_set_rgb", lambda: ((), {"red": 0, "green
 NEGATIVE_CASES.append(("lighting_enable_set_rgb", lambda: ((), {"red": 0, "green": 0, "blue": 256}), "blue must be between 0 and 255, got 256"))
 
 # ─── SBX ───
-NEGATIVE_CASES.append(("sbx_slider", lambda: ((), {"audio_feature": AudioFeature.SURROUND_SLIDER, "value": -1}), "between 0 and 100, got -1"))
-NEGATIVE_CASES.append(("sbx_slider", lambda: ((), {"audio_feature": AudioFeature.SURROUND_SLIDER, "value": 101}), "between 0 and 100, got 101"))
+NEGATIVE_CASES.append(("sbx_slider", lambda: ((), {"profile_name": Profile.Name.SPECIAL, "audio_feature": AudioFeature.SURROUND_SLIDER, "value": -1}), "between 0 and 100, got -1"))
+NEGATIVE_CASES.append(("sbx_slider", lambda: ((), {"profile_name": Profile.Name.SPECIAL, "audio_feature": AudioFeature.SURROUND_SLIDER, "value": 101}), "between 0 and 100, got 101"))
 # @formatter:on
 
 

@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
 
 import g6_cli.g6_api as g6_api
 from g6_cli.g6_core import G6Device
+from g6_cli.g6_model import Profile
 from g6_cli.g6_spec import AudioFeature, PlaybackFilter, SmartVolumeSpecialHex, Channel
 from g6_cli.g6_spec.decoder import DecoderMode
 from g6_cli.g6_spec.recording import MicrophoneEqualizerPreset
@@ -195,6 +197,15 @@ def test_g6api_hid_methods_call_hid_sender(
 ) -> None:
     args, kwargs = args_factory()
 
+    # Prepare kwargs to use test method invocation
+    method_kwargs: dict[str, Any]
+    if method_name in ("sbx_toggle", "sbx_slider", "sbx_smart_volume_special"):
+        method_kwargs = kwargs.copy()
+        method_kwargs.update({"profile_name": Profile.Name.SPECIAL})
+    else:
+        method_kwargs = kwargs
+    spec_kwargs = kwargs
+
     # Create a mock for hex data ("*_spec()" method in g6_api)
     expected_hid_data_list = [b"hid-payload"]
     spec_mock = MagicMock(return_value=expected_hid_data_list)
@@ -207,10 +218,10 @@ def test_g6api_hid_methods_call_hid_sender(
 
     # Execute method on g6_api instance
     method = getattr(api, method_name)
-    method(*args, **kwargs)
+    method(**method_kwargs)
 
     # Assert: correct spec method called
-    spec_mock.assert_called_once_with(*args, **kwargs)
+    spec_mock.assert_called_once_with(**spec_kwargs)
 
     # Assert: send_hid_data_to_device called correctly
     send_hid_mock.assert_called_once_with(hid_data_list=expected_hid_data_list)
