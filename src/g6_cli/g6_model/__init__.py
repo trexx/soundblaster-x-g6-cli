@@ -7,7 +7,16 @@ from g6_cli.g6_model.mixer import Mixer
 from g6_cli.g6_model.playback import Playback
 from g6_cli.g6_model.recording import Recording
 from g6_cli.g6_model.sbx import SBX, Profile, Profiles
-from g6_cli.g6_model.serialization import DeserializationError, SerializationError
+
+
+class SerializationError(Exception):
+    def __init__(self, cause: Exception):
+        super().__init__(f"Unable to serialize model: {cause}")
+
+
+class DeserializationError(Exception):
+    def __init__(self, cause: Exception) -> None:
+        super().__init__(f"Unable to deserialize model: {cause}")
 
 
 class G6Model:

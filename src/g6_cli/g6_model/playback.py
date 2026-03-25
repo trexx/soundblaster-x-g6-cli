@@ -1,6 +1,5 @@
 from enum import Enum
 
-from g6_cli.g6_model.serialization import deserialize_channel, serialize_channel
 from g6_cli.g6_spec import Channel, PlaybackFilter, BOTH_CHANNELS
 
 
@@ -146,7 +145,7 @@ class Playback:
             "is_speakers": self.__is_speakers,
             "speakers_audio_mode": self.__speakers_audio_mode.value,
             "headphones_audio_mode": self.__headphones_audio_mode.value,
-            "volumes": {serialize_channel(channel=ch): v for ch, v in sorted(self.__volumes.items())},
+            "volumes": {ch.serialize(): v for ch, v in sorted(self.__volumes.items())},
             "direct_mode_enabled": self.__direct_mode_enabled,
             "spdif_out_direct_mode_enabled": self.__spdif_out_direct_mode_enabled,
             "filter": self.__filter.name,
@@ -174,7 +173,7 @@ class Playback:
         instance.__volumes = {}
         for name, v in data.get("volumes", {}).items():
             try:
-                ch = deserialize_channel(channel_text=name)
+                ch = Channel.deserialize(channel_text=name)
                 instance.__volumes[ch] = int(v)
             except (KeyError, TypeError) as e:
                 raise RuntimeError(f"Unknown channel '{name}': {e}")

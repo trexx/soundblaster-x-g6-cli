@@ -1,4 +1,3 @@
-from g6_cli.g6_model.serialization import deserialize_channel, serialize_channel
 from g6_cli.g6_spec import Channel, BOTH_CHANNELS
 from g6_cli.g6_spec.recording import MicrophoneEqualizerPreset
 
@@ -195,11 +194,11 @@ class Recording:
     def to_dict(self) -> dict:
         return {
             "mute": self.__mute,
-            "mic_recording_volumes": {serialize_channel(channel=ch): v for ch, v in
+            "mic_recording_volumes": {ch.serialize(): v for ch, v in
                                       sorted(self.__mic_recording_volumes.items())},
             "mic_boost": self.__mic_boost,
             "mic_monitoring_mute": self.__mic_monitoring_mute,
-            "mic_monitoring_volumes": {serialize_channel(channel=ch): v for ch, v in
+            "mic_monitoring_volumes": {ch.serialize(): v for ch, v in
                                        sorted(self.__mic_monitoring_volumes.items())},
             "voice_clarity_enabled": self.__voice_clarity_enabled,
             "voice_clarity_noise_reduction_level": self.__voice_clarity_noise_reduction_level,
@@ -226,7 +225,7 @@ class Recording:
         instance.__mic_recording_volumes = {}
         for name, v in data.get("mic_recording_volumes", {}).items():
             try:
-                ch = deserialize_channel(channel_text=name)
+                ch = Channel.deserialize(channel_text=name)
                 instance.__mic_recording_volumes[ch] = int(v)
             except (KeyError, TypeError) as e:
                 raise RuntimeError(f"Unknown channel '{name}': {e}")
@@ -234,7 +233,7 @@ class Recording:
         instance.__mic_monitoring_volumes = {}
         for name, v in data.get("mic_monitoring_volumes", {}).items():
             try:
-                ch = deserialize_channel(channel_text=name)
+                ch = Channel.deserialize(channel_text=name)
                 instance.__mic_monitoring_volumes[ch] = int(v)
             except (KeyError, TypeError) as e:
                 raise RuntimeError(f"Unknown channel '{name}': {e}")

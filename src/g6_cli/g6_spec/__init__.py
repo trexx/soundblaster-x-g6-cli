@@ -43,6 +43,25 @@ class Channel(Enum):
     CHANNEL_1 = bytes.fromhex('0102')  # LEFT
     CHANNEL_2 = bytes.fromhex('0202')  # RIGHT
 
+    def serialize(self) -> str:
+        match self:
+            case Channel.CHANNEL_1:
+                return 'left'
+            case Channel.CHANNEL_2:
+                return 'right'
+            case _:
+                raise ValueError(f"Unknown channel: {self}")
+
+    @staticmethod
+    def deserialize(channel_text: str) -> "Channel":
+        match channel_text:
+            case 'left':
+                return Channel.CHANNEL_1
+            case 'right':
+                return Channel.CHANNEL_2
+            case _:
+                raise ValueError(f"Unknown channel: {channel_text}")
+
     def __lt__(self, other):
         """
         Makes this enum sortable for in-order channel serialization in model file ('left channel' before 'right channel').

@@ -1,4 +1,3 @@
-from g6_cli.g6_model.serialization import serialize_channel, deserialize_channel
 from g6_cli.g6_spec import Channel, BOTH_CHANNELS
 
 
@@ -185,25 +184,25 @@ class Mixer:
         return {
             "playback_mute": self.__playback_mute,
             "monitoring_line_in_mute": self.__monitoring_line_in_mute,
-            "monitoring_line_in_volumes": {serialize_channel(channel=ch): v for ch, v in
+            "monitoring_line_in_volumes": {ch.serialize(): v for ch, v in
                                            sorted(self.__monitoring_line_in_volumes.items())},
             "monitoring_external_mic_mute": self.__monitoring_external_mic_mute,
-            "monitoring_external_mic_volumes": {serialize_channel(channel=ch): v for ch, v in
+            "monitoring_external_mic_volumes": {ch.serialize(): v for ch, v in
                                                 sorted(self.__monitoring_external_mic_volumes.items())},
             "monitoring_spdif_in_mute": self.__monitoring_spdif_in_mute,
-            "monitoring_spdif_in_volumes": {serialize_channel(channel=ch): v for ch, v in
+            "monitoring_spdif_in_volumes": {ch.serialize(): v for ch, v in
                                             sorted(self.__monitoring_spdif_in_volumes.items())},
             "recording_line_in_mute": self.__recording_line_in_mute,
-            "recording_line_in_volumes": {serialize_channel(channel=ch): v for ch, v in
+            "recording_line_in_volumes": {ch.serialize(): v for ch, v in
                                           sorted(self.__recording_line_in_volumes.items())},
             "recording_external_mic_mute": self.__recording_external_mic_mute,
-            "recording_external_mic_volumes": {serialize_channel(channel=ch): v for ch, v in
+            "recording_external_mic_volumes": {ch.serialize(): v for ch, v in
                                                sorted(self.__recording_external_mic_volumes.items())},
             "recording_spdif_in_mute": self.__recording_spdif_in_mute,
-            "recording_spdif_in_volumes": {serialize_channel(channel=ch): v for ch, v in
+            "recording_spdif_in_volumes": {ch.serialize(): v for ch, v in
                                            sorted(self.__recording_spdif_in_volumes.items())},
             "recording_what_u_hear_mute": self.__recording_what_u_hear_mute,
-            "recording_what_u_hear_volumes": {serialize_channel(channel=ch): v for ch, v in
+            "recording_what_u_hear_volumes": {ch.serialize(): v for ch, v in
                                               sorted(self.__recording_what_u_hear_volumes.items())},
         }
 
@@ -237,7 +236,7 @@ class Mixer:
             volumes_dict = {}
             for channel_text, volume in data.get(field, {}).items():
                 try:
-                    ch = deserialize_channel(channel_text=channel_text)
+                    ch = Channel.deserialize(channel_text=channel_text)
                     volumes_dict[ch] = int(volume)
                 except (KeyError, TypeError) as e:
                     raise RuntimeError(f"Unknown channel '{channel_text}': {e}")
