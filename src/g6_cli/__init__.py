@@ -16,7 +16,7 @@ from g6_cli.g6_spec.decoder import DecoderMode
 from g6_cli.g6_spec.recording import MicrophoneEqualizerPreset
 from g6_cli.g6_util import to_bool
 
-VERSION = '1.1.0a0'
+VERSION = '1.1.0a1'
 
 # The name of the temporary file to remember the last toggle state in. If the file could not be found. The program
 # lets the G6 to toggle to Speakers by default.
@@ -80,7 +80,7 @@ def parse_cli_args():
     general_options_group.add_argument('--claim-and-release', required=False, action='store_true',
                                        help='Let the application exclusively claim the G6\'s USB AudioControl interface from the kernel and release it afterwards.'
                                             ' This will disconnect the G6 device from the kernel sound driver "snd-usb-audio" leading the system not having any audio output.'
-                                            ' Use `--reload-audio-services` to reload the kernel sound driver and make the audio output available again.')
+                                            ' Use `--reload-audio-services` to reload it and make the audio output available again.')
     general_options_group.add_argument('--reload-audio-services', required=False, action='store_true',
                                        help='Reload ALSA and restart user PipeWire services.')
     general_options_group.add_argument('--reload-audio-services-no-sudo', required=False, action='store_true',

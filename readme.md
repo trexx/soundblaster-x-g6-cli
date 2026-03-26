@@ -165,7 +165,7 @@ is complete.
 ## CLI usage
 
 ```text
-usage: soundblaster-x-g6-cli [-h] [--dry-run] [--debug] [--no-persist] [--version] 
+usage: soundblaster-x-g6-cli [-h] [--dry-run] [--debug] [--no-persist] [--version]
                  [--claim-and-release]
                  [--reload-audio-services] 
                  [--reload-audio-services-no-sudo]
@@ -218,6 +218,9 @@ usage: soundblaster-x-g6-cli [-h] [--dry-run] [--debug] [--no-persist] [--versio
                  [--recording-voice-clarity-smart-volume {Enabled|Disabled}]
                  [--recording-voice-clarity-mic-eq {Enabled|Disabled}]
                  [--recording-voice-clarity-mic-eq-preset {PRESET_1|PRESET_2|PRESET_3|PRESET_4|PRESET_5|PRESET_6|PRESET_7|PRESET_8|PRESET_9|PRESET_10|PRESET_DM_1}]
+                 [--sbx-profile {Gaming,Music,Cinema,Special}]
+                 [--sbx-profile-switch {Gaming,Music,Cinema,Special}]
+                 [--sbx-profile-print]
                  [--sbx-surround {Enabled|Disabled}]
                  [--sbx-surround-value {0..100}]
                  [--sbx-crystalizer {Enabled|Disabled}]
@@ -239,8 +242,9 @@ General options:
   --debug               Print communication data with the G6 device to the console.
   --no-persist          Disables reading and writing of the current G6 state in file '~/.soundblaster-x-g6/g6.json'.
   --version             show program's version number and exit
-  --claim-and-release   Let the application exclusively claim the G6's USB AudioControl interface from the kernel and release it afterwards. This will disconnect the G6 device from the kernel sound driver "snd-usb-audio" leading the system not having any audio output. Use `--reload-audio-services` to reload the
-                        kernel sound driver and make the audio output available again.
+  --claim-and-release   Let the application exclusively claim the G6's USB AudioControl interface from the kernel and release it afterwards. 
+                        This will disconnect the G6 device from the kernel sound driver "snd-usb-audio" leading the system not having any audio output. 
+                        Use `--reload-audio-services` to reload it and make the audio output available again.
   --reload-audio-services
                         Reload ALSA and restart user PipeWire services.
   --reload-audio-services-no-sudo
@@ -379,28 +383,33 @@ Recording [Audio]:
 SBX [HID]:
   Control SBX effects using the G6's USB HID interface.
 
+  --sbx-profile {Gaming,Music,Cinema,Special}
+                        Defines the SBX profile to use for updating single SBX effects. May not be used together with --sbx-profile-switch.
+  --sbx-profile-switch {Gaming,Music,Cinema,Special}
+                        Switch to the specified SBX profile. May not be used together with --sbx-profile.
+  --sbx-profile-print   Prints the name of the current active SBX profile to console.
   --sbx-surround {Enabled|Disabled}
-                        Enables or disables the Surround sound effect.
+                        Enables or disables the Surround sound effect. Specify the SBX profile to update with --sbx-profile.
   --sbx-surround-value {0..100}
-                        Set the value for the Surround sound effect as integer.
+                        Set the value for the Surround sound effect as integer. Specify the SBX profile to update with --sbx-profile.
   --sbx-crystalizer {Enabled|Disabled}
-                        Enables or disables the Crystalizer sound effect.
+                        Enables or disables the Crystalizer sound effect. Specify the SBX profile to update with --sbx-profile.
   --sbx-crystalizer-value {0..100}
-                        Set the value for the Crystalizer sound effect as integer.
+                        Set the value for the Crystalizer sound effect as integer. Specify the SBX profile to update with --sbx-profile.
   --sbx-bass {Enabled|Disabled}
-                        Enables or disables the Bass sound effect.
-  --set-bass-value {0..100}
-                        Set the value for the Bass sound effect as integer.
+                        Enables or disables the Bass sound effect. Specify the SBX profile to update with --sbx-profile.
+  --sbx-bass-value {0..100}
+                        Set the value for the Bass sound effect as integer. Specify the SBX profile to update with --sbx-profile.
   --sbx-smart-volume {Enabled|Disabled}
-                        Enables or disables the Smart-Volume sound effect.
+                        Enables or disables the Smart-Volume sound effect. Specify the SBX profile to update with --sbx-profile.
   --sbx-smart-volume-value {0..100}
-                        Set the value for the Smart-Volume sound effect as value.
+                        Set the value for the Smart-Volume sound effect as value. Specify the SBX profile to update with --sbx-profile.
   --sbx-smart-volume-special-value {Night|Loud}
-                        Set the value for the Smart-Volume sound effect as string (supersedes --set-smart-volume-value).
+                        Set the value for the Smart-Volume sound effect as string (supersedes --set-smart-volume-value). Specify the SBX profile to update with --sbx-profile.
   --sbx-dialog-plus {Enabled|Disabled}
-                        Enables or disables the Dialog-Plus sound effect.
+                        Enables or disables the Dialog-Plus sound effect. Specify the SBX profile to update with --sbx-profile.
   --sbx-dialog-plus-value {0..100}
-                        Set the value for the Dialog-Plus sound effect as integer.
+                        Set the value for the Dialog-Plus sound effect as integer. Specify the SBX profile to update with --sbx-profile.
 ```
 
 ## Development
