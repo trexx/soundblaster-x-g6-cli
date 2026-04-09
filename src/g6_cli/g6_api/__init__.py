@@ -4,7 +4,7 @@ import subprocess
 import sys
 
 from g6_cli.g6_core import (
-    detect_device
+    detect_device, G6_VENDOR_ID, G6_PRODUCT_ID
 )
 from g6_cli.g6_model import G6Model
 from g6_cli.g6_model.playback import AudioMode
@@ -130,27 +130,16 @@ class G6Api:
     def release_audio_interface(self) -> None:
         self.__device.release_audio_interface()
 
-    def reload_alsa_and_pipewire(self, sudo: bool = True) -> None:
+    def reload_audio(self) -> None:
         """
-        Reload ALSA (usually root) and restart user PipeWire services.
-
-        Note: For running sudo without a password, you need to configure /etc/sudoers.d/soundblaster-x-g6-cli:
-        # sound-blaster-x-g6-cli
-        <username> ALL=(ALL:ALL) NOPASSWD: /usr/sbin/alsa force-reload
+        Reset the G6 usb device and restart user PipeWire services.
         """
 
-        def reload_alsa():
-            alsa_cmd = ["/usr/sbin/alsa", "force-reload"]
-            if sudo:
-                sudo_path = shutil.which("sudo")
-                if not sudo_path:
-                    raise RuntimeError("sudo not found; run as root or install/configure sudo.")
-                alsa_cmd = [sudo_path, "--non-interactive", *alsa_cmd]
-
-            completed_process = subprocess.run(alsa_cmd,
+        def usb_reset():
+            completed_process = subprocess.run(["/usr/bin/usbreset", f"{G6_VENDOR_ID:04x}:{G6_PRODUCT_ID:04x}"],
                                                capture_output=True,
                                                encoding='utf-8',
-                                               check=False)  # check=False: some module may fail. Continue anyway ...
+                                               check=True)
             sys.stdout.write(completed_process.stdout)
             sys.stderr.write(completed_process.stderr)
 
@@ -177,8 +166,8 @@ class G6Api:
             print("This is a dry run. ALSA and PipeWire will not be reloaded.")
             return
 
-        # ── ALSA reload (root) ──
-        reload_alsa()
+        # ── Reset USB device ──
+        usb_reset()
 
         # ── Restart PipeWire (user services) ──
         reload_pipewire()

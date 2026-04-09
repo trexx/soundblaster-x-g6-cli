@@ -50,20 +50,25 @@ Apply the udev rules by issuing:
 sudo udevadm trigger
 ```
 
-### Linux: Create sudoers entry for reloading ALSA
+### Linux: configure /etc/asound.conf
 
-To use the application with the `--reload-audio-services` option, you need to add the following line to your sudoers
-file:
+Configure `/etc/asound.conf` to let ALSA reliably detect the G6 device on reload:
 
-```shell
-# Add sudoers entry:
-sudo cat > /etc/sudoers.d/50-soundblaster-x-g6 << EOF
-<username> ALL=(ALL:ALL) NOPASSWD: /usr/sbin/alsa force-reload
-EOF
+```text
+# Force ALSA to always use the Sound BlasterX G6 by its card name (not index)
+# The name "G6" is fixed by the driver and never changes even if the kernel
+# reassigns card numbers because of other USB devices.
+
+pcm.!default {
+    type hw
+    card G6
+}
+
+ctl.!default {
+    type hw
+    card G6
+}
 ```
-
-Replace `<username>` with your actual username. This allows the application (on your behalf) to reload the ALSA services
-without entering your password.
 
 ### Linux: Install libusb1
 
@@ -168,7 +173,6 @@ is complete.
 usage: soundblaster-x-g6-cli [-h] [--dry-run] [--debug] [--no-persist] [--version]
                  [--claim-and-release]
                  [--reload-audio-services] 
-                 [--reload-audio-services-no-sudo]
                  [--toggle-output] 
                  [--set-output {Speakers|Headphones}]
                  [--playback-mute {Enabled|Disabled}]
@@ -246,9 +250,7 @@ General options:
                         This will disconnect the G6 device from the kernel sound driver "snd-usb-audio" leading the system not having any audio output. 
                         Use `--reload-audio-services` to reload it and make the audio output available again.
   --reload-audio-services
-                        Reload ALSA and restart user PipeWire services.
-  --reload-audio-services-no-sudo
-                        Reload audio services, but do not use sudo for ALSA reload.
+                        Let the system reset the G6 USB device and restart user PipeWire services.
 
 Playback [HID]:
   Control basic features using the G6's USB HID interface.

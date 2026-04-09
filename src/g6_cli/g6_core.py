@@ -19,7 +19,7 @@ G6_AUDIO_CONTROL_INTERFACE = 0
 G6_HID_INTERFACE = 4
 
 # The udev rule to create in /etc/udev/rules.d/50-soundblaster-x-g6.rules
-UDEV_RULE = r'SUBSYSTEM=="usb", ATTRS{idVendor}=="041e", ATTRS{idProduct}=="3256", TAG+="uaccess"'
+UDEV_RULE = f'SUBSYSTEM=="usb", ATTRS{{idVendor}}=="{G6_VENDOR_ID:04x}", ATTRS{{idProduct}}=="{G6_PRODUCT_ID:04x}", TAG+="uaccess"'
 
 # The payloads available to send to the G6
 PAYLOAD_HEX_LINE_PATTERN = r'^[a-f0-9]{128}$'

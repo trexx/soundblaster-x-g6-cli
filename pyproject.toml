@@ -11,7 +11,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "soundblaster-x-g6-cli"
 # REMEMBER to update the version in g6_cli/__init__.py!
-version = "1.1.0a1"
+version = "1.1.0a4"
 #
 dependencies = [
     "hidapi==0.14.0",

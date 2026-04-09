@@ -16,7 +16,7 @@ from g6_cli.g6_spec.decoder import DecoderMode
 from g6_cli.g6_spec.recording import MicrophoneEqualizerPreset
 from g6_cli.g6_util import to_bool
 
-VERSION = '1.1.0a1'
+VERSION = '1.1.0a4'
 
 # The name of the temporary file to remember the last toggle state in. If the file could not be found. The program
 # lets the G6 to toggle to Speakers by default.
@@ -82,9 +82,7 @@ def parse_cli_args():
                                             ' This will disconnect the G6 device from the kernel sound driver "snd-usb-audio" leading the system not having any audio output.'
                                             ' Use `--reload-audio-services` to reload it and make the audio output available again.')
     general_options_group.add_argument('--reload-audio-services', required=False, action='store_true',
-                                       help='Reload ALSA and restart user PipeWire services.')
-    general_options_group.add_argument('--reload-audio-services-no-sudo', required=False, action='store_true',
-                                       help='Reload audio services, but do not use sudo for ALSA reload.')
+                                       help='Let the system reset the G6 USB device and restart user PipeWire services.')
 
     #
     # Playback [HID / Audio]
@@ -781,8 +779,7 @@ def device_set_audio_effects(api: G6Api, args: argparse.Namespace):
 
         # Reload ALSA and PipeWire, if requested.
         if args.reload_audio_services:
-            use_sudo = not args.reload_audio_services_no_sudo
-            api.reload_alsa_and_pipewire(sudo=use_sudo)
+            api.reload_audio()
 
 
 def main():

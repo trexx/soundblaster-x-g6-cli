@@ -20,7 +20,7 @@ def around_session(api: g6_api.G6Api):
 
     # teardown: release interface and reload ALSA
     api.release_audio_interface()
-    api.reload_alsa_and_pipewire(sudo=True)
+    api.reload_audio()
 
 
 @pytest.mark.skip(reason="Only run manually!")

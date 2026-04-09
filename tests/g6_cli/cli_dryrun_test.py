@@ -16,8 +16,7 @@ CLI_CASES: list[tuple[str, ArgsListFactory]] = []
 
 # @formatter:off
 # ─── Device / services ───
-CLI_CASES.append(("reload_alsa_and_pipewire", lambda: ["--reload-audio-services"]))
-CLI_CASES.append(("reload_alsa_and_pipewire", lambda: ["--reload-audio-services", "--reload-audio-services-no-sudo"]))
+CLI_CASES.append(("reload_audio", lambda: ["--reload-audio-services"]))
 
 # ─── Playback ───
 CLI_CASES.append(("playback_toggle_to_speakers", lambda: ["--set-output", "Speakers"]))
