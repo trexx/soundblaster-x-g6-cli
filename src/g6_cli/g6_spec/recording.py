@@ -177,7 +177,7 @@ def _toggle_audio_feature(audio_feature: bytes, enable: bool) -> list[UsbHidData
     ]
 
 
-def voice_clarity_enabled(enable: bool) -> list[UsbHidDataFragment]:
+def voice_clarity_noise_reduction_enabled(enable: bool) -> list[UsbHidDataFragment]:
     """
     Enable or disable the voice clarity feature for the microphone.
     :param enable: enable=True to enable the feature, disable=False to disable it.

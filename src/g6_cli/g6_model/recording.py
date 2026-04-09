@@ -11,7 +11,7 @@ class Recording:
         self.__mic_boost: int | None = None
         self.__mic_monitoring_mute: bool | None = None
         self.__mic_monitoring_volumes: dict[Channel, int] | None = None
-        self.__voice_clarity_enabled: bool | None = None
+        self.__voice_clarity_noise_reduction_enabled: bool | None = None
         self.__voice_clarity_noise_reduction_level: int | None = None
         self.__voice_clarity_acoustic_echo_cancellation_enabled: bool | None = None
         self.__voice_clarity_smart_volume_enabled: bool | None = None
@@ -26,7 +26,7 @@ class Recording:
         instance.__mic_boost = 0
         instance.__mic_monitoring_mute = False
         instance.__mic_monitoring_volumes = {channel: 50 for channel in BOTH_CHANNELS}
-        instance.__voice_clarity_enabled = False
+        instance.__voice_clarity_noise_reduction_enabled = False
         instance.__voice_clarity_noise_reduction_level = 0
         instance.__voice_clarity_acoustic_echo_cancellation_enabled = False
         instance.__voice_clarity_smart_volume_enabled = False
@@ -116,17 +116,17 @@ class Recording:
             if ch in self.__mic_monitoring_volumes:
                 self.__mic_monitoring_volumes[ch] = volume_percent
 
-    def get_voice_clarity_enabled(self) -> bool:
+    def get_voice_clarity_noise_reduction_enabled(self) -> bool:
         """
-        Get voice clarity enabled state.
+        Get voice clarity noise reduction enabled state.
         """
-        return self.__voice_clarity_enabled
+        return self.__voice_clarity_noise_reduction_enabled
 
-    def set_voice_clarity_enabled(self, enable: bool) -> None:
+    def set_voice_clarity_noise_reduction_enabled(self, enable: bool) -> None:
         """
-        Set voice clarity enabled state.
+        Set voice clarity noise reduction enabled state.
         """
-        self.__voice_clarity_enabled = enable
+        self.__voice_clarity_noise_reduction_enabled = enable
 
     def get_voice_clarity_noise_reduction_level(self) -> int:
         """
@@ -200,7 +200,7 @@ class Recording:
             "mic_monitoring_mute": self.__mic_monitoring_mute,
             "mic_monitoring_volumes": {ch.serialize(): v for ch, v in
                                        sorted(self.__mic_monitoring_volumes.items())},
-            "voice_clarity_enabled": self.__voice_clarity_enabled,
+            "voice_clarity_noise_reduction_enabled": self.__voice_clarity_noise_reduction_enabled,
             "voice_clarity_noise_reduction_level": self.__voice_clarity_noise_reduction_level,
             "voice_clarity_acoustic_echo_cancellation_enabled": self.__voice_clarity_acoustic_echo_cancellation_enabled,
             "voice_clarity_smart_volume_enabled": self.__voice_clarity_smart_volume_enabled,
@@ -214,7 +214,7 @@ class Recording:
         instance.__mute = data.get("mute", False)
         instance.__mic_boost = data.get("mic_boost", 0)
         instance.__mic_monitoring_mute = data.get("mic_monitoring_mute", False)
-        instance.__voice_clarity_enabled = data.get("voice_clarity_enabled", False)
+        instance.__voice_clarity_noise_reduction_enabled = data.get("voice_clarity_noise_reduction_enabled", False)
         instance.__voice_clarity_noise_reduction_level = data.get("voice_clarity_noise_reduction_level", 0)
         instance.__voice_clarity_acoustic_echo_cancellation_enabled = data.get(
             "voice_clarity_acoustic_echo_cancellation_enabled", False

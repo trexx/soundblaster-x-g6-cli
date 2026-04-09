@@ -24,7 +24,7 @@ in Windows by using a [QEMU/KVM VM](https://virt-manager.org/) and the USB Redir
 
 ## System requirements
 
-### Linux: Create udev-rule
+### Create udev-rule
 
 In `/etc/udev/rules.d/` create a rule file as root (e.q. with name `50-soundblaster-x-g6.rules`) having the
 following content:
@@ -50,7 +50,7 @@ Apply the udev rules by issuing:
 sudo udevadm trigger
 ```
 
-### Linux: configure /etc/asound.conf
+### Configure /etc/asound.conf
 
 Configure `/etc/asound.conf` to let ALSA reliably detect the G6 device on reload:
 
@@ -70,7 +70,7 @@ ctl.!default {
 }
 ```
 
-### Linux: Install libusb1
+### Install libusb1
 
 The following libusb packages are required:
 
@@ -82,14 +82,6 @@ libusb-1.0-0/jammy-updates,now 2:1.0.25-1ubuntu2 amd64 [installed]
 ```shell
 sudo apt-get -y install libusb-1.0-0-dev libusb-1.0-0 
 ```
-
-### Windows: Add libusb-1.0.dll to %PATH%
-
-Download the package [libusb](https://pypi.org/project/libusb/#files) from Pypi (version `1.0.27`) and add the
-following DLL file to your `%PATH%` variable:
-`/libusb-1.0.27/src/libusb/_platform/_windows/x64/libusb-1.0.dll`
-
-This is required to let the application use libusb in the backend.
 
 ## Installation
 
@@ -216,8 +208,8 @@ usage: soundblaster-x-g6-cli [-h] [--dry-run] [--debug] [--no-persist] [--versio
                  [--recording-mic-monitoring-mute {Enabled|Disabled}]
                  [--recording-mic-monitoring-volume {0|10|20|..|100}]
                  [--recording-mic-monitoring-volume-channels {Both|Left|Right}]
-                 [--recording-voice-clarity {Enabled|Disabled}]
-                 [--recording-voice-clarity-noise-reduction {0|20|40|..|100}]
+                 [--recording-voice-clarity-noise-reduction {Enabled|Disabled}]
+                 [--recording-voice-clarity-noise-reduction-level {0|20|40|..|100}]
                  [--recording-voice-clarity-aec {Enabled|Disabled}]
                  [--recording-voice-clarity-smart-volume {Enabled|Disabled}]
                  [--recording-voice-clarity-mic-eq {Enabled|Disabled}]
@@ -353,9 +345,9 @@ Recording [HID]:
 
   --recording-mic-boost-db {0|10|20|30}
                         Set mic boost in dB as integer.
-  --recording-voice-clarity {Enabled|Disabled}
-                        Enable/disable voice clarity.
-  --recording-voice-clarity-noise-reduction {0|20|40|..|100}
+  --recording-voice-clarity-noise-reduction {Enabled|Disabled}
+                        Enable/disable noise reduction.
+  --recording-voice-clarity-noise-reduction-level {0|20|40|..|100}
                         Set noise reduction level as integer.
   --recording-voice-clarity-aec {Enabled|Disabled}
                         Enable/disable acoustic echo cancellation (AEC).

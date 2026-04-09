@@ -77,7 +77,7 @@ CASES.extend([
     ("recording", lambda m: m.get_mute(),                       lambda m, v: m.set_mute(v),                        [False, True],                          "mute"),
     ("recording", lambda m: m.get_mic_boost(),                  lambda m, v: m.set_mic_boost(v),                   [0, 10, 20, 30],                        "mic_boost"),
     ("recording", lambda m: m.get_mic_monitoring_mute(),        lambda m, v: m.set_mic_monitoring_mute(v),         [False, True],                          "mic_monitor_mute"),
-    ("recording", lambda m: m.get_voice_clarity_enabled(),      lambda m, v: m.set_voice_clarity_enabled(v),       [False, True],                          "vc_enabled"),
+    ("recording", lambda m: m.get_voice_clarity_noise_reduction_enabled(), lambda m, v: m.set_voice_clarity_noise_reduction_enabled(v), [False, True],     "vc_nr_enabled"),
     ("recording", lambda m: m.get_voice_clarity_noise_reduction_level(),
                                                                 lambda m, v: m.set_voice_clarity_noise_reduction_level(v),
                                                                                                             [0, 20, 40, 60, 80, 100],   "vc_nr_level"),

@@ -59,7 +59,7 @@ from g6_cli.g6_spec.recording import (
     mic_recording_volume as mic_recording_volume_spec,
     recording_mute as recording_mute_spec,
     voice_clarity_smart_volume_enabled as voice_clarity_smart_volume_enabled_spec,
-    voice_clarity_enabled as voice_clarity_enabled_spec,
+    voice_clarity_noise_reduction_enabled as voice_clarity_noise_reduction_enabled_spec,
     voice_clarity_noise_reduction_level as voice_clarity_noise_reduction_level_spec,
 )
 from g6_cli.g6_spec.sbx import (
@@ -144,6 +144,7 @@ class G6Api:
             sys.stderr.write(completed_process.stderr)
 
         def reload_pipewire():
+            # noinspection PyDeprecation
             systemctl = shutil.which("systemctl")
             if not systemctl:
                 raise RuntimeError("systemctl not found.")
@@ -622,16 +623,16 @@ class G6Api:
     def recording_mic_monitoring_available(self) -> bool:
         return self.__device.is_audio_interface_available()
 
-    def recording_voice_clarity_enabled(self, enable: bool) -> None:
+    def recording_voice_clarity_noise_reduction_enabled(self, enable: bool) -> None:
         # send data to G6
-        hid_data_list = voice_clarity_enabled_spec(enable=enable)
+        hid_data_list = voice_clarity_noise_reduction_enabled_spec(enable=enable)
         self.__device.send_hid_data_to_device(hid_data_list=hid_data_list)
         # update model
         if self.__persist_model:
-            self.__model.get_recording().set_voice_clarity_enabled(enable)
+            self.__model.get_recording().set_voice_clarity_noise_reduction_enabled(enable)
             self.save_model()
 
-    def recording_voice_clarity_enabled_available(self) -> bool:
+    def recording_voice_clarity_noise_reduction_enabled_available(self) -> bool:
         return self.__device.is_hid_interface_available()
 
     def recording_voice_clarity_noise_reduction_level(self, level_percent: int) -> None:

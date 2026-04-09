@@ -121,8 +121,8 @@ HID_CASES.append(("lighting_enable_set_rgb", "lighting_enable_set_rgb_spec", lam
 # ─── Recording (hid) ───
 HID_CASES.append(("recording_mic_boost", "mic_boost_spec", lambda: ((), {"decibel": 0})))
 HID_CASES.append(("recording_mic_boost", "mic_boost_spec", lambda: ((), {"decibel": 10})))
-HID_CASES.append(("recording_voice_clarity_enabled", "voice_clarity_enabled_spec", lambda: ((), {"enable": True})))
-HID_CASES.append(("recording_voice_clarity_enabled", "voice_clarity_enabled_spec", lambda: ((), {"enable": False})))
+HID_CASES.append(("recording_voice_clarity_noise_reduction_enabled", "voice_clarity_noise_reduction_enabled_spec", lambda: ((), {"enable": True})))
+HID_CASES.append(("recording_voice_clarity_noise_reduction_enabled", "voice_clarity_noise_reduction_enabled_spec", lambda: ((), {"enable": False})))
 HID_CASES.append(("recording_voice_clarity_noise_reduction_level", "voice_clarity_noise_reduction_level_spec", lambda: ((), {"level_percent": 0})))
 HID_CASES.append(("recording_voice_clarity_noise_reduction_level", "voice_clarity_noise_reduction_level_spec", lambda: ((), {"level_percent": 20})))
 HID_CASES.append(("recording_voice_clarity_noise_reduction_level", "voice_clarity_noise_reduction_level_spec", lambda: ((), {"level_percent": 100})))

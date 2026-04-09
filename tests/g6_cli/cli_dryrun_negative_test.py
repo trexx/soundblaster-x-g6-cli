@@ -66,10 +66,11 @@ ARGPARSE_ERROR_CLI_CASES.append(("recording_mic_boost_high", lambda: ["--recordi
 ARGPARSE_ERROR_CLI_CASES.append(("recording_mic_boost_type", lambda: ["--recording-mic-boost-db", "bar"], "invalid int value: 'bar'"))
 ARGPARSE_ERROR_CLI_CASES.append(("recording_mic_monitoring_volume_invalid", lambda: ["--recording-mic-monitoring-volume", "5"], "invalid choice: 5 (choose from 0, 10, 20,"))
 ARGPARSE_ERROR_CLI_CASES.append(("recording_mic_monitoring_volume_type", lambda: ["--recording-mic-monitoring-volume", "bar"], "invalid int value: 'bar'"))
-ARGPARSE_ERROR_CLI_CASES.append(("recording_voice_clarity_noise_reduction_invalid", lambda: ["--recording-voice-clarity-noise-reduction", "10"], "invalid choice: 10 (choose from 0, 20, 40, 60, 80, 100)"))
-ARGPARSE_ERROR_CLI_CASES.append(("recording_voice_clarity_noise_reduction_low", lambda: ["--recording-voice-clarity-noise-reduction", "-20"], "invalid choice: -20 (choose from 0, 20, 40, 60, 80, 100)"))
-ARGPARSE_ERROR_CLI_CASES.append(("recording_voice_clarity_noise_reduction_high", lambda: ["--recording-voice-clarity-noise-reduction", "120"], "invalid choice: 120 (choose from 0, 20, 40, 60, 80, 100)"))
-ARGPARSE_ERROR_CLI_CASES.append(("recording_voice_clarity_noise_reduction_type", lambda: ["--recording-voice-clarity-noise-reduction", "bar"], "invalid int value: 'bar'"))
+ARGPARSE_ERROR_CLI_CASES.append(("recording_voice_clarity_noise_reduction_invalid", lambda: ["--recording-voice-clarity-noise-reduction", "Bar"], "invalid choice: 'Bar' (choose from 'Enabled', 'Disabled')"))
+ARGPARSE_ERROR_CLI_CASES.append(("recording_voice_clarity_noise_reduction_level_invalid", lambda: ["--recording-voice-clarity-noise-reduction-level", "10"], "invalid choice: 10 (choose from 0, 20, 40, 60, 80, 100)"))
+ARGPARSE_ERROR_CLI_CASES.append(("recording_voice_clarity_noise_reduction_level_low", lambda: ["--recording-voice-clarity-noise-reduction-level", "-20"], "invalid choice: -20 (choose from 0, 20, 40, 60, 80, 100)"))
+ARGPARSE_ERROR_CLI_CASES.append(("recording_voice_clarity_noise_reduction_level_high", lambda: ["--recording-voice-clarity-noise-reduction-level", "120"], "invalid choice: 120 (choose from 0, 20, 40, 60, 80, 100)"))
+ARGPARSE_ERROR_CLI_CASES.append(("recording_voice_clarity_noise_reduction_level_type", lambda: ["--recording-voice-clarity-noise-reduction-level", "bar"], "invalid int value: 'bar'"))
 ARGPARSE_ERROR_CLI_CASES.append(("recording_voice_clarity_mic_eq_preset_invalid", lambda: ["--recording-voice-clarity-mic-eq-preset", "BAR"], "invalid choice: 'BAR'"))
 
 # ─── SBX ───

@@ -16,7 +16,7 @@ from g6_cli.g6_spec.decoder import DecoderMode
 from g6_cli.g6_spec.recording import MicrophoneEqualizerPreset
 from g6_cli.g6_util import to_bool
 
-VERSION = '1.1.0a4'
+VERSION = '1.1.0a5'
 
 # The name of the temporary file to remember the last toggle state in. If the file could not be found. The program
 # lets the G6 to toggle to Speakers by default.
@@ -294,10 +294,10 @@ def parse_cli_args():
                                        metavar="{Both|Left|Right}",
                                        help='Define channels for --recording-mic-monitoring-volume.')
 
-    recording_hid_group.add_argument('--recording-voice-clarity', required=False, type=str, choices=enabled_disabled,
+    recording_hid_group.add_argument('--recording-voice-clarity-noise-reduction', required=False, type=str, choices=enabled_disabled,
                                      metavar="{Enabled|Disabled}",
-                                     help='Enable/disable voice clarity.')
-    recording_hid_group.add_argument('--recording-voice-clarity-noise-reduction', required=False, type=int,
+                                     help='Enable/disable noise reduction.')
+    recording_hid_group.add_argument('--recording-voice-clarity-noise-reduction-level', required=False, type=int,
                                      choices=numbers_0_100_step_20,
                                      metavar="{0|20|40|..|100}",
                                      help='Set noise reduction level as integer.')
@@ -412,8 +412,8 @@ def parse_cli_args():
             and args.recording_mic_boost_db is None \
             and args.recording_mic_monitoring_mute is None \
             and args.recording_mic_monitoring_volume is None \
-            and args.recording_voice_clarity is None \
             and args.recording_voice_clarity_noise_reduction is None \
+            and args.recording_voice_clarity_noise_reduction_level is None \
             and args.recording_voice_clarity_aec is None \
             and args.recording_voice_clarity_smart_volume is None \
             and args.recording_voice_clarity_mic_eq is None \
@@ -696,11 +696,11 @@ def device_set_audio_effects(api: G6Api, args: argparse.Namespace):
                 volume_percent=args.recording_mic_monitoring_volume,
                 channels=_channels_from_cli(args.recording_mic_monitoring_volume_channels))
         # voice clarity
-        if args.recording_voice_clarity is not None:
-            api.recording_voice_clarity_enabled(enable=to_bool(args.recording_voice_clarity))
         if args.recording_voice_clarity_noise_reduction is not None:
+            api.recording_voice_clarity_noise_reduction_enabled(enable=to_bool(args.recording_voice_clarity_noise_reduction))
+        if args.recording_voice_clarity_noise_reduction_level is not None:
             api.recording_voice_clarity_noise_reduction_level(
-                level_percent=args.recording_voice_clarity_noise_reduction)
+                level_percent=args.recording_voice_clarity_noise_reduction_level)
         if args.recording_voice_clarity_aec is not None:
             api.recording_voice_clarity_acoustic_echo_cancellation_enabled(
                 enable=to_bool(args.recording_voice_clarity_aec))
