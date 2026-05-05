@@ -155,6 +155,10 @@ def parse_cli_args():
     lighting_hid_group.add_argument('--lighting-rgb', required=False, type=int, nargs=3,
                                     metavar=('{0..255}', '{0..255}', '{0..255}'),
                                     help='Enable lighting and set RGB.')
+    lighting_hid_group.add_argument('--lighting-volume-ring', required=False,
+                                    choices=['Enabled', 'Disabled'],
+                                    help='Enable or disable the volume ring light (bright LED under the volume knob).')
+
 
     #
     # Mixer [Audio]
@@ -392,6 +396,7 @@ def parse_cli_args():
             and args.decoder_mode is None \
             and args.lighting_disable is False \
             and args.lighting_rgb is None \
+            and args.lighting_volume_ring is None \
             and args.mixer_playback_mute is None \
             and args.mixer_monitoring_line_in_mute is None \
             and args.mixer_monitoring_line_in_volume is None \
@@ -617,6 +622,8 @@ def device_set_audio_effects(api: G6Api, args: argparse.Namespace):
         if args.lighting_rgb is not None:
             red, green, blue = args.lighting_rgb
             api.lighting_enable_set_rgb(red=red, green=green, blue=blue)
+        if args.lighting_volume_ring is not None:
+            api.lighting_volume_ring(enable=to_bool(args.lighting_volume_ring))
 
         #
         # Mixer

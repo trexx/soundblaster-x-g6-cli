@@ -1,6 +1,13 @@
 from __future__ import annotations
 
-from g6_cli.g6_spec import UsbHidDataFragment, EMPTY_ADDITIONAL_PAYLOAD
+from g6_cli.g6_spec import UsbHidDataFragment, EMPTY_ADDITIONAL_PAYLOAD, DataFragmentMode
+
+# Volume ring light (bright white LED under the volume knob).
+# Command 0x0e, audio_feature byte: 0x00=enabled, 0x01=disabled.
+LIGHTING_VOLUME_RING_MODE             = bytes.fromhex('3903')
+LIGHTING_VOLUME_RING_INTERMEDIATE     = bytes.fromhex('000e')
+LIGHTING_VOLUME_RING_COMMIT_MODE      = bytes.fromhex('3901')
+LIGHTING_VOLUME_RING_COMMIT_INTERMEDIATE = bytes.fromhex('0100')
 
 LIGHTING_DISABLE_MODE = bytes.fromhex('3A02')
 LIGHTING_DISABLE_INTERMEDIATE = bytes.fromhex('0600')
@@ -14,6 +21,25 @@ LIGHTING_ENABLE_PRE_2_INTERMEDIATE = bytes.fromhex('0400')
 LIGHTING_ENABLE_RGB_MODE = bytes.fromhex('3A09')
 LIGHTING_ENABLE_RGB_INTERMEDIATE = bytes.fromhex('0A00')
 LIGHTING_ENABLE_RGB_AUDIO_FEATURE = bytes.fromhex('03')
+
+
+def lighting_volume_ring(enable: bool) -> list[UsbHidDataFragment]:
+    return [
+        UsbHidDataFragment(
+            mode=LIGHTING_VOLUME_RING_MODE,
+            intermediate=LIGHTING_VOLUME_RING_INTERMEDIATE,
+            audio_feature=bytes.fromhex('00') if enable else bytes.fromhex('01'),
+            value=bytes.fromhex('00000000'),
+            additional_payload=EMPTY_ADDITIONAL_PAYLOAD,
+        ),
+        UsbHidDataFragment(
+            mode=LIGHTING_VOLUME_RING_COMMIT_MODE,
+            intermediate=LIGHTING_VOLUME_RING_COMMIT_INTERMEDIATE,
+            audio_feature=bytes.fromhex('00'),
+            value=bytes.fromhex('00000000'),
+            additional_payload=EMPTY_ADDITIONAL_PAYLOAD,
+        ),
+    ]
 
 
 def lighting_disable() -> list[UsbHidDataFragment]:
