@@ -1,0 +1,15 @@
+name: 'Trivy'
+
+on:
+  schedule:
+    - cron: '37 12 * * *'
+
+jobs:
+  scan:
+    uses: 'trexx/actions/.github/workflows/trivy-fs.yml@main'
+    secrets: 'inherit'
+    permissions:
+      packages: 'read'
+      contents: 'read'
+      security-events: 'write'
+      actions: 'read'
