@@ -1,0 +1,12 @@
+name: 'Build'
+
+on:
+  push:
+    tags: [ 'v*.*.*' ]
+
+jobs:
+  build:
+    uses: 'trexx/actions/.github/workflows/build-rust.yml@main'
+    secrets: 'inherit'
+    permissions:
+      contents: read
