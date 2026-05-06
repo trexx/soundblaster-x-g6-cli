@@ -1,0 +1,43 @@
+name: Trivy security scan
+
+on:
+  push:
+    branches: [main, windows-rust-port]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Daily at 06:00 UTC. Re-runs catch newly-disclosed CVEs even when the
+    # repo itself hasn't changed.
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write  # required to upload SARIF to the Security tab
+  actions: read           # required by upload-sarif on private repos
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Trivy filesystem scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: sarif
+          output: trivy-results.sarif
+          severity: CRITICAL,HIGH,MEDIUM
+          ignore-unfixed: false
+          exit-code: 0
+        env:
+          TRIVY_CACHE_DIR: .trivycache
+
+      - name: Upload SARIF to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
+          category: trivy-fs
