@@ -9,4 +9,4 @@ jobs:
     uses: 'trexx/actions/.github/workflows/build-rust.yml@main'
     secrets: 'inherit'
     permissions:
-      contents: read
+      contents: write
