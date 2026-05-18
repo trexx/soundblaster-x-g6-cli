@@ -1,4 +1,4 @@
-use super::{HidFrame, RECORDING_INTERMEDIATE, MODE_DATA, MODE_COMMIT, EMPTY_ADDITIONAL,
+use super::{HidFrame, MODE_DATA, MODE_COMMIT, EMPTY_ADDITIONAL,
             mic_boost_bytes, voice_clarity_level_bytes, slider_percent_bytes};
 
 // ── Mic boost ─────────────────────────────────────────────────────────────────

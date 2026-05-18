@@ -1,4 +1,4 @@
-use super::{HidFrame, PlaybackFilter, PLAYBACK_INTERMEDIATE, MODE_DATA, MODE_COMMIT, EMPTY_ADDITIONAL};
+use super::{HidFrame, PlaybackFilter, MODE_DATA, MODE_COMMIT, EMPTY_ADDITIONAL};
 
 pub fn toggle_to_speakers() -> Vec<HidFrame> {
     let mut frames = vec![
