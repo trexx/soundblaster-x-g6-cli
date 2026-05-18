@@ -1,6 +1,6 @@
 [package]
 name = "g6-cli"
-version = "2.0.0"
+version = "0.0.3"
 edition = "2021"
 description = "CLI tool for controlling the SoundBlaster X G6 on Windows"
 license = "GPL-2.0-only"
