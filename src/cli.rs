@@ -82,8 +82,7 @@ pub enum LightingAction {
     },
     /// Enable or disable the volume ring LED
     Ring {
-        #[arg(value_name = "on|off", value_parser = parse_on_off)]
-        enable: bool,
+        enable: OnOff,
     },
 }
 
@@ -93,13 +92,11 @@ pub enum LightingAction {
 pub enum PlaybackAction {
     /// Enable or disable Direct Mode
     Direct {
-        #[arg(value_name = "on|off", value_parser = parse_on_off)]
-        enable: bool,
+        enable: OnOff,
     },
     /// Enable or disable SPDIF-Out Direct Mode
     SpdifDirect {
-        #[arg(value_name = "on|off", value_parser = parse_on_off)]
-        enable: bool,
+        enable: OnOff,
     },
     /// Set the DAC playback filter
     Filter { filter: PlaybackFilter },
@@ -116,26 +113,22 @@ pub enum MicAction {
     },
     /// Enable or disable noise reduction
     NoiseReduction {
-        #[arg(value_name = "on|off", value_parser = parse_on_off)]
-        enable: bool,
+        enable: OnOff,
         /// Noise reduction level (0, 20, 40, 60, 80, or 100)
         #[arg(long, value_name = "level", value_parser = parse_voice_clarity_level)]
         level: Option<u8>,
     },
     /// Enable or disable Acoustic Echo Cancellation
     Aec {
-        #[arg(value_name = "on|off", value_parser = parse_on_off)]
-        enable: bool,
+        enable: OnOff,
     },
     /// Enable or disable Smart Volume
     SmartVolume {
-        #[arg(value_name = "on|off", value_parser = parse_on_off)]
-        enable: bool,
+        enable: OnOff,
     },
     /// Enable or disable microphone equalizer
     Eq {
-        #[arg(value_name = "on|off", value_parser = parse_on_off)]
-        enable: bool,
+        enable: OnOff,
         /// Apply an EQ preset
         #[arg(long, value_name = "preset")]
         preset: Option<MicEqPreset>,
@@ -153,32 +146,28 @@ pub enum SbxAction {
     /// Control Surround effect
     Surround {
         profile: ProfileName,
-        #[arg(value_name = "on|off", value_parser = parse_on_off)]
-        enable: bool,
+        enable: OnOff,
         #[arg(long, value_parser = clap::value_parser!(u8).range(0..=100))]
         value: Option<u8>,
     },
     /// Control Crystalizer effect
     Crystalizer {
         profile: ProfileName,
-        #[arg(value_name = "on|off", value_parser = parse_on_off)]
-        enable: bool,
+        enable: OnOff,
         #[arg(long, value_parser = clap::value_parser!(u8).range(0..=100))]
         value: Option<u8>,
     },
     /// Control Bass effect
     Bass {
         profile: ProfileName,
-        #[arg(value_name = "on|off", value_parser = parse_on_off)]
-        enable: bool,
+        enable: OnOff,
         #[arg(long, value_parser = clap::value_parser!(u8).range(0..=100))]
         value: Option<u8>,
     },
     /// Control Smart Volume effect
     SmartVolume {
         profile: ProfileName,
-        #[arg(value_name = "on|off", value_parser = parse_on_off)]
-        enable: bool,
+        enable: OnOff,
         #[arg(long, value_parser = clap::value_parser!(u8).range(0..=100))]
         value: Option<u8>,
         /// Use Night or Loud special mode instead of a numeric value
@@ -188,22 +177,27 @@ pub enum SbxAction {
     /// Control Dialog Plus effect
     DialogPlus {
         profile: ProfileName,
-        #[arg(value_name = "on|off", value_parser = parse_on_off)]
-        enable: bool,
+        enable: OnOff,
         #[arg(long, value_parser = clap::value_parser!(u8).range(0..=100))]
         value: Option<u8>,
     },
 }
 
-// ── Custom parsers ────────────────────────────────────────────────────────────
+// ── on/off value enum ─────────────────────────────────────────────────────────
 
-fn parse_on_off(s: &str) -> Result<bool, String> {
-    match s.to_lowercase().as_str() {
-        "on" | "true" | "1" | "enabled"  => Ok(true),
-        "off" | "false" | "0" | "disabled" => Ok(false),
-        _ => Err(format!("expected 'on' or 'off', got '{s}'")),
+#[derive(Clone, Copy, clap::ValueEnum)]
+pub enum OnOff {
+    On,
+    Off,
+}
+
+impl From<OnOff> for bool {
+    fn from(v: OnOff) -> bool {
+        matches!(v, OnOff::On)
     }
 }
+
+// ── Custom parsers ────────────────────────────────────────────────────────────
 
 fn parse_mic_boost_db(s: &str) -> Result<u8, String> {
     let db: u8 = s.parse().map_err(|_| format!("expected 0, 10, 20, or 30, got '{s}'"))?;
