@@ -3,6 +3,10 @@
 This markdown file contains hex encoded payload samples, which have been recorded with [Wireshark USBPCAP](https://wiki.wireshark.org/CaptureSetup/USB)
 sending data to the G6 using the original [SoundBlaster Command](https://support.creative.com/Products/ProductDetails.aspx?prodID=21383&prodName=Sound%20Blaster) software.
 
+> **Scope note:** The current Windows CLI implements only the rows marked
+> `USB-Interface: HID`. Rows marked `USB-Interface: Audio` are kept here as
+> reference for anyone extending the project.
+
 ## Profile (SBX)
 
 | Feature     | Operation                     | USB-Interface | Data Fragment: Static | Data Fragment: Mode | Data Fragment: Static | Data Fragment: Audio-Feature     | Data Fragment: Value    | Data Fragment: Additional Payload                                                                            |
